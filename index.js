@@ -3,9 +3,20 @@
 
 var exec = require( 'child_process' ).exec;
 var fs = require( 'fs.extra' );
+var os = require( 'os' );
 var xml2js = require( 'xml2js' );
 
 
+
+var xmlToJson = function( dataXml, callback ) {
+	xml2js.parseString(dataXml, 
+		{
+			explicitRoot: false, 
+			explicitArray: false
+		},
+		callback
+	);
+};
 
 var execute = function( cmd, options, callback ) {
 
@@ -34,7 +45,7 @@ var execute = function( cmd, options, callback ) {
 	}
 	exec( cmd, execOptions, function( err, stdo, stde ) {
 		if ( !options.quiet ) {
-			stde.pipe( process.stderr );
+			process.stderr.write( stde.toString() );
 		}
 		if ( typeof callback === 'function' ) {
 			callback( err, stdo.toString() );
@@ -50,13 +61,26 @@ var executeSvn = function( params, options, callback ) {
 };
 
 
+var executeSvnXml = function( params, options, callback ) {
+	executeSvn( params.concat( [ '--xml' ] ), options, function( err, data ) {
+		if ( !err ) {
+			xmlToJson( data, function( err2, json ) {
+				callback( err2, json );
+			} );
+		} else {
+			callback( err, null );
+		}
+	} );
+};
+
+
 var executeSvnmucc = function( params, options, callback ) {
 	options = options || {};
 	execute( ( options.svnmucc || 'svnmucc' ) + ' ' + params.join( " " ), options, callback );
 };
 
 
-var addExtraOptions = function( validOptionsArray, options ) {
+var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 	if ( options ) {
 		options.params = options.params || [];
 		validOptionsArray.forEach( function( validOption ) {
@@ -74,6 +98,9 @@ var addExtraOptions = function( validOptionsArray, options ) {
 				case 'revision':
 					if ( options.revision ) {
 						options.params.push('--revision',options.revision.toString());
+						if ( addRevProp ) {
+							options.params.push( '--revprop' );
+						}
 					}
 					break;
 				case 'depth':
@@ -91,17 +118,8 @@ var addExtraOptions = function( validOptionsArray, options ) {
 	}
 };
 
-var xmlToJson = function( dataXml, callback ) {
-	xml2js.parseString(dataXml, 
-		{
-			explicitRoot: false, 
-			explicitArray: false
-		},
-		callback
-	);
-};
 
-
+exports.commands = {};
 
 
 var checkout = function( url, dir, options, callback ) {
@@ -112,8 +130,8 @@ var checkout = function( url, dir, options, callback ) {
 	fs.mkdirsSync( dir );
 	executeSvn( [ 'checkout', url, dir ], options, callback );
 };
-exports.checkout = checkout;
-exports.co = checkout;
+exports.commands.checkout = checkout;
+exports.commands.co = checkout;
 
 var update = function( dir, options, callback ) {
 	if ( typeof options === 'function' ) {
@@ -122,7 +140,7 @@ var update = function( dir, options, callback ) {
 	addExtraOptions( [ 'force', 'quiet', 'revision', 'depth', 'ignoreExternals' ], options );
 	executeSvn( [ 'update', dir ], options, callback );
 };
-exports.update = update;
+exports.commands.update = update;
 
 var add = function( files, options, callback ) {
 	if ( !Array.isArray( files ) ) {
@@ -134,7 +152,7 @@ var add = function( files, options, callback ) {
 	addExtraOptions( [ 'force', 'quiet', 'depth' ], options );
 	executeSvn( [ 'add' ].concat( files ), options, callback );
 };
-exports.add = add;
+exports.commands.add = add;
 
 // TODO: blame
 
@@ -148,7 +166,7 @@ var cat = function( targets, options, callback ) {
 	addExtraOptions( [ 'revision' ], options );
 	executeSvn( [ 'cat' ].concat( targets ), options, callback );
 };
-exports.cat = cat;
+exports.commands.cat = cat;
 
 // TODO: changelist (cl)
 
@@ -158,7 +176,7 @@ var cleanup = function( wc, options, callback ) {
 	}
 	executeSvn( [ 'cleanup', wc ], options, callback );
 };
-exports.cleanup = cleanup;
+exports.commands.cleanup = cleanup;
 
 var commit = function( files, options, callback ) {
 	if ( !Array.isArray( files ) ) {
@@ -170,8 +188,8 @@ var commit = function( files, options, callback ) {
 	addExtraOptions( [ 'quiet', 'depth' ], options );
 	executeSvn( [ 'commit' ].concat( files ), options, callback );
 };
-exports.commit = commit;
-exports.ci = commit;
+exports.commands.commit = commit;
+exports.commands.ci = commit;
 
 var copy = function( srcs, dst, options, callback ) {
 	if ( !Array.isArray( srcs ) ) {
@@ -183,8 +201,8 @@ var copy = function( srcs, dst, options, callback ) {
 	addExtraOptions( [ 'revision', 'quiet', 'depth' ], options );
 	executeSvn( [ 'copy' ].concat( srcs ).push( dst ), options, callback );
 };
-exports.copy = copy;
-exports.cp = copy;
+exports.commands.copy = copy;
+exports.commands.cp = copy;
 
 var del = function( srcs, options, callback ) {
 	if ( !Array.isArray( srcs ) ) {
@@ -196,9 +214,9 @@ var del = function( srcs, options, callback ) {
 	addExtraOptions( [ 'quiet', 'force' ], options );
 	executeSvn( [ 'del' ].concat( srcs ), options, callback );
 };
-exports.del = del;
-exports.remove = del;
-exports.rm = del;
+exports.commands.del = del;
+exports.commands.remove = del;
+exports.commands.rm = del;
 
 // TODO: diff
 
@@ -211,7 +229,8 @@ var exp = function( src, dst, options, callback ) {
 	addExtraOptions( [ 'revision', 'quiet', 'force' ], options );
 	executeSvn( [ 'export', src, dst ], options, callback );
 };
-exports.exp = exp;
+exports.commands.export = exp;
+exports.commands.exp = exp;
 
 // import method
 var imp = function( src, dst, options, callback ) {
@@ -221,7 +240,8 @@ var imp = function( src, dst, options, callback ) {
 	addExtraOptions( [ 'depth', 'quiet', 'force' ], options );
 	executeSvn( [ 'import', src, dst ], options, callback );
 };
-exports.imp = imp;
+exports.commands.import = imp;
+exports.commands.imp = imp;
 
 var info = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -231,15 +251,9 @@ var info = function( targets, options, callback ) {
 		callback = options;
 	}
 	addExtraOptions( [ 'depth', 'revision' ], options );
-	executeSvn( [ 'info' ].concat( targets ).push( '--xml' ), options, function( err, data ) {
-		var json;
-		if ( !err ) {
-			json = xmlToJson( data ).entry;
-		}
-		callback( err, json );
-	} );
+	executeSvnXml( [ 'info' ].concat( targets ), options, callback );
 };
-exports.info = info;
+exports.commands.info = info;
 
 var list = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -249,16 +263,10 @@ var list = function( targets, options, callback ) {
 		callback = options;
 	}
 	addExtraOptions( [ 'depth', 'revision' ], options );
-	executeSvn( [ 'list' ].concat( targets ).push( '--xml' ), options, function( err, data ) {
-		var json;
-		if ( !err ) {
-			json = xmlToJson( data ).entry;
-		}
-		callback( err, json );
-	} );
+	executeSvnXml( [ 'list' ].concat( targets ), options, callback );
 };
-exports.list = list;
-exports.ls = list;
+exports.commands.list = list;
+exports.commands.ls = list;
 
 var lock = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -270,9 +278,20 @@ var lock = function( targets, options, callback ) {
 	addExtraOptions( [ 'force' ], options );
 	executeSvn( [ 'lock' ].concat( targets ), options, callback );
 };
-exports.lock = lock;
+exports.commands.lock = lock;
 
-// TODO: log
+var log = function( targets, options, callback ) {
+	if ( !Array.isArray( targets ) ) {
+		targets = [targets];
+	}
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	addExtraOptions( [ 'quiet', 'depth', 'revision' ], options );
+	executeSvnXml( [ 'log' ].concat( targets ), options, callback );
+};
+exports.commands.log = log;
+
 // TODO: merge
 // TODO: mergeinfo
 
@@ -286,7 +305,7 @@ var mkdir = function( targets, options, callback ) {
 	addExtraOptions( [ 'quiet' ], options );
 	executeSvn( [ 'mkdir' ].concat( targets ), options, callback );
 };
-exports.mkdir = mkdir;
+exports.commands.mkdir = mkdir;
 
 var move = function( srcs, dst, options, callback ) {
 	if ( !Array.isArray( srcs ) ) {
@@ -298,10 +317,10 @@ var move = function( srcs, dst, options, callback ) {
 	addExtraOptions( [ 'quiet', 'force' ], options );
 	executeSvn( [ 'move' ].concat( srcs ).push( dst ), options, callback );
 };
-exports.move = move;
-exports.mv = move;
-exports.rename = move;
-exports.ren = move;
+exports.commands.move = move;
+exports.commands.mv = move;
+exports.commands.rename = move;
+exports.commands.ren = move;
 
 var patch = function( patchFile, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
@@ -309,20 +328,133 @@ var patch = function( patchFile, wc, options, callback ) {
 	}
 	executeSvn( [ 'patch', patchFile, wc ], options, callback );
 };
-exports.patch = patch;
+exports.commands.patch = patch;
 
-// propdel (pdel, pd)
-// propedit (pedit, pe)
-// propget (pget, pg)
-// proplist (plist, pl)
-// propset (pset, ps)
-// relocate
-// resolve
-// resolved
-// revert
-// status (stat, st)
-// switch (sw)
-// unlock
-// update (up)
-// upgrade
+var propdel = function( propName, target, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	addExtraOptions( [ 'quiet', 'depth' ], options, true );
+	executeSvn( [ 'propdel', propName, target ], options, callback );
+};
+exports.commands.propdel = propdel;
+exports.commands.pdel = propdel;
+exports.commands.pd = propdel;
+
+// propedit (pedit, pe) - not supported
+
+var propget = function( propName, targets, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	if ( !Array.isArray( targets ) ) {
+		targets = [targets];
+	}
+	addExtraOptions( [ 'depth', 'revision' ], options, true );
+	executeSvnXml( [ 'propget', propName ].concat( targets ), options, callback );
+};
+exports.commands.propget = propget;
+exports.commands.pget = propget;
+exports.commands.pg = propget;
+
+var proplist = function( targets, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	if ( !Array.isArray( targets ) ) {
+		targets = [targets];
+	}
+	addExtraOptions( [ 'quiet', 'depth', 'revision' ], options, true );
+	executeSvnXml( [ 'proplist' ].concat( targets ), options, callback );
+};
+exports.commands.proplist = proplist;
+exports.commands.plist = proplist;
+exports.commands.pl = proplist;
+
+var propset = function( propName, propVal, wc, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	addExtraOptions( [ 'quiet', 'depth', 'revision', 'force' ], options, true );
+	executeSvn( [ 'propset', propName, propVal, wc ], options, callback );
+};
+exports.commands.proplist = proplist;
+exports.commands.plist = proplist;
+exports.commands.pl = proplist;
+
+var relocate = function( url, wc, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	executeSvn( [ 'relocate', url, wc ], options, callback );
+};
+exports.commands.relocate = relocate;
+
+// resolve/resolved - probably doesn't make sense to automate
+
+var revert = function( wc, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	addExtraOptions( [ 'quiet', 'depth' ], options );
+	executeSvn( [ 'revert', wc ], options, callback );
+};
+exports.commands.revert = revert;
+
+var status = function( wc, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	addExtraOptions( [ 'quiet', 'depth' ], options );
+	executeSvnXml( [ 'status', wc ], options, callback );
+};
+exports.commands.status = status;
+exports.commands.stat = status;
+exports.commands.st = status;
+
+var switchf = function( url, wc, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	addExtraOptions( [ 'quiet', 'depth', 'revision', 'force' ], options );
+	executeSvn( [ 'switch', url, wc ], options, callback );
+};
+exports.commands.switch = switchf;
+
+var unlock = function( targets, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	if ( !Array.isArray( targets ) ) {
+		targets = [targets];
+	}
+	addExtraOptions( [ 'force' ], options );
+	executeSvn( [ 'unlock' ].concat( targets ), options, callback );
+};
+exports.commands.unlock = unlock;
+
+var update = function( wcs, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	if ( !Array.isArray( wcs ) ) {
+		wcs = [wcs];
+	}
+	addExtraOptions( [ 'force', 'revision', 'depth' ], options );
+	executeSvn( [ 'update' ].concat( wcs ), options, callback );
+};
+exports.commands.update = update;
+exports.commands.up = update;
+
+var upgrade = function( wcs, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	if ( !Array.isArray( wcs ) ) {
+		wcs = [wcs];
+	}
+	addExtraOptions( [ 'quiet' ], options );
+	executeSvn( [ 'upgrade' ].concat( wcs ), options, callback );
+};
+exports.commands.upgrade = upgrade;
 
