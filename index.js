@@ -5,6 +5,7 @@ var exec = require( 'child_process' ).exec;
 var fs = require( 'fs.extra' );
 var os = require( 'os' );
 var xml2js = require( 'xml2js' );
+var semver = require( 'semver' );
 
 
 
@@ -74,9 +75,11 @@ var executeSvnXml = function( params, options, callback ) {
 };
 
 
-var executeSvnmucc = function( params, options, callback ) {
+var executeMucc = function( params, options, callback ) {
 	options = options || {};
-	execute( ( options.svnmucc || 'svnmucc' ) + ' ' + params.join( " " ), options, callback );
+	var cmd = ( options.svnmucc || 'svnmucc' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
+	console.log( cmd );
+	execute( cmd, options, callback );
 };
 
 
@@ -459,6 +462,32 @@ var upgrade = function( wcs, options, callback ) {
 exports.commands.upgrade = upgrade;
 
 
+// svnmucc
+/**
+	commandArray can contain array of the following
+  cp REV SRC-URL DST-URL : copy SRC-URL@REV to DST-URL
+  mkdir URL              : create new directory URL
+  mv SRC-URL DST-URL     : move SRC-URL to DST-URL
+  rm URL                 : delete URL
+  put SRC-FILE URL       : add or modify file URL with contents copied from
+                           SRC-FILE (use "-" to read from standard input)
+  propset NAME VALUE URL : set property NAME on URL to VALUE
+  propsetf NAME FILE URL : set property NAME on URL to value read from FILE
+  propdel NAME URL       : delete property NAME from URL
+*/
+var mucc = function( commandArray, commitMessage, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+	}
+	if ( !Array.isArray( commandArray ) ) {
+		commandArray = [commandArray];
+	}
+	executeMucc( commandArray.concat( [ '-m "' + commitMessage + '"' ] ), options, callback );
+};
+exports.commands.mucc = mucc;
+
+
+// Utilities
 
 exports.util = {};
 
@@ -485,4 +514,64 @@ var getRevision = function( target, options, callback ) {
 	} );
 };
 exports.util.getRevision = getRevision;
+
+
+var parseUrl = function( url ) {
+	var trunkMatch = url.match( /(.*)\/(trunk|branches|tags)\/*(.*)\/*$/i );
+	if ( trunkMatch ) {
+		return {
+			rootUrl: trunkMatch[1],
+			type: trunkMatch[2],
+			typeName: trunkMatch[3],
+			trunkUrl: trunkMatch[1] + "/trunk",
+			tagsUrl: trunkMatch[1] + "/tags",
+			branchesUrl: trunkMatch[1] + "/branches"
+		};
+	}
+	throw new Error( "parseUrl: Url does not look like an SVN repository" );
+};
+exports.util.parseUrl = parseUrl;
+
+var getTags = function( url, options, callback ) {
+	if ( typeof options === "function" ) {
+		callback = options;
+		options = null;
+	}
+	var tagsUrl = parseUrl( url ).tagsUrl;
+	list( tagsUrl, options, function( err, data ) {
+		var result;
+		if ( !err && data && data.list && Array.isArray( data.list.entry ) ) {
+			result = data.list.entry.filter( function( entry ) {
+					return entry && entry.$ && entry.$.kind === "dir";
+				} );
+		}
+		callback( err, result );
+	} );
+};
+exports.util.getTags = getTags;
+
+
+var getLatestTag = function( url, options, callback ) {
+	if ( typeof options === "function" ) {
+		callback = options;
+		options = null;
+	}
+	getTags( url, options, function( err, tagArray ) {
+		var latest;
+		console.log( tagArray );
+		if ( !err && Array.isArray( tagArray ) && tagArray.length > 0 ) {
+			tagArray.sort( function( a, b ) {
+				try {
+					return semver.rcompare( a.name, b.name );
+				}
+				catch ( err2 ) {
+					return -1;
+				}
+			} );
+			latest = tagArray[0];
+		}
+		callback( err, latest );
+	} );
+};
+exports.util.getLatestTag = getLatestTag;
 

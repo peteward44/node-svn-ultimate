@@ -96,6 +96,14 @@ describe('node-svn-ultimate', function() {
 				done();
 			} );
 		});
+		
+		it('mucc', function(done) {
+			svnUltimate.commands.mucc( [ "mkdir " + testServer + "/testdir" ], "commit", function( err, data ) {
+				should.not.exist(err);
+				console.log( data );
+				done();
+			} );
+		});
 	});
 	
 	describe( 'util', function() {
@@ -108,11 +116,27 @@ describe('node-svn-ultimate', function() {
 				done();
 			} );
 		});
-									
+
 		it('getRevision url', function(done) {
 			svnUltimate.util.getRevision( testServer, function( err, data ) {
 				should.not.exist(err);
 				data.should.be.a.Number;
+				done();
+			} );
+		});
+		
+		it('getTags', function(done) {
+			svnUltimate.util.getTags( testServer, function( err, data ) {
+				should.not.exist(err);
+				data.should.be.instanceof( Array );
+				done();
+			} );
+		});
+		
+		it('getLatestTag', function(done) {
+			svnUltimate.util.getLatestTag( testServer, function( err, data ) {
+				should.not.exist(err);
+				console.log( data );
 				done();
 			} );
 		});
