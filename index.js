@@ -517,7 +517,7 @@ exports.util.getRevision = getRevision;
 
 
 var parseUrl = function( url ) {
-	var trunkMatch = url.match( /(.*)\/(trunk|branches|tags)\/*(.*)\/*$/i );
+	var trunkMatch = url.match( /(.*)\/(trunk|branches|tags)\/*(.*)\/*(.*)$/i );
 	if ( trunkMatch ) {
 		return {
 			rootUrl: trunkMatch[1],
