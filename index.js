@@ -14,7 +14,7 @@ var xmlToJson = function( dataXml, callback ) {
 			explicitRoot: false, 
 			explicitArray: false
 		},
-		callback
+		function( err, json ) { callback( err, json ); }
 	);
 };
 
@@ -457,4 +457,32 @@ var upgrade = function( wcs, options, callback ) {
 	executeSvn( [ 'upgrade' ].concat( wcs ), options, callback );
 };
 exports.commands.upgrade = upgrade;
+
+
+
+exports.util = {};
+
+var getRevision = function( target, options, callback ) {
+	if ( typeof options === "function" ) {
+		callback = options;
+		options = null;
+	}
+	info( target, options, function( err, data ) {
+		var rev;
+		if ( !err ) {
+			if ( data && data.entry && data.entry.$ && data.entry.$.revision ) {
+				try {
+					rev = parseInt( data.entry.$.revision, 10 );
+				}
+				catch ( err3 ) {
+					err = 'Invalid revision value [' + data.entry.$.revision + ']';
+				}
+			} else {
+				err = 'Could not parse info result to get revision [' + JSON.stringify( data ) + ']';
+			}
+		}
+		callback( err, rev );
+	} );
+};
+exports.util.getRevision = getRevision;
 

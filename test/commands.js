@@ -98,6 +98,26 @@ describe('node-svn-ultimate', function() {
 		});
 	});
 	
+	describe( 'util', function() {
+							
+		it('getRevision path', function(done) {
+			var p = path.join( tempTestDir, "out_works" );
+			svnUltimate.util.getRevision( p, function( err, data ) {
+				should.not.exist(err);
+				data.should.be.a.Number;
+				done();
+			} );
+		});
+									
+		it('getRevision url', function(done) {
+			svnUltimate.util.getRevision( testServer, function( err, data ) {
+				should.not.exist(err);
+				data.should.be.a.Number;
+				done();
+			} );
+		});
+	} );
+	
 	after( function() {
 		fs.deleteSync( tempTestDir );
 	} );
