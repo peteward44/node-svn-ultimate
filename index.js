@@ -78,7 +78,6 @@ var executeSvnXml = function( params, options, callback ) {
 var executeMucc = function( params, options, callback ) {
 	options = options || {};
 	var cmd = ( options.svnmucc || 'svnmucc' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
-	console.log( cmd );
 	execute( cmd, options, callback );
 };
 
@@ -228,7 +227,6 @@ var exp = function( src, dst, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
 	}
-	fs.mkdirsSync( dst );
 	addExtraOptions( [ 'revision', 'quiet', 'force' ], options );
 	executeSvn( [ 'export', src, dst ], options, callback );
 };
@@ -558,7 +556,6 @@ var getLatestTag = function( url, options, callback ) {
 	}
 	getTags( url, options, function( err, tagArray ) {
 		var latest;
-		console.log( tagArray );
 		if ( !err && Array.isArray( tagArray ) && tagArray.length > 0 ) {
 			tagArray.sort( function( a, b ) {
 				try {
