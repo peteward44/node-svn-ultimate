@@ -474,6 +474,9 @@ exports.commands.upgrade = upgrade;
   propdel NAME URL       : delete property NAME from URL
 */
 var mucc = function( commandArray, commitMessage, options, callback ) {
+	if ( typeof commitMessage !== 'string' ) {
+		throw new Error( "svnUltimate.command.mucc - commitMessage must be a string" );
+	}
 	if ( typeof options === 'function' ) {
 		callback = options;
 	}
