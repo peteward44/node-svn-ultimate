@@ -19,9 +19,7 @@ var xmlToJson = function( dataXml, callback ) {
 	);
 };
 
-var execute = function( cmd, options, callback ) {
-
-	options = options || {};
+var buildExecuteOptions = function( options ) {
 	if ( options.shell === undefined && os.platform === "win32" ) {
 		options.shell = 'start "" /B '  // windows only - this makes it so a cmd window won't pop up when running as a service or through pm2
 	}
@@ -30,6 +28,13 @@ var execute = function( cmd, options, callback ) {
 		cwd: options.cwd,
 		shell: options.shell
 	};
+	return execOptions;
+};
+
+var execute = function( cmd, options, callback ) {
+
+	options = options || {};
+	var execOptions = buildExecuteOptions( options );
 	
 	cmd += ' --non-interactive';
 	if ( options.trustServerCert ) {
@@ -500,12 +505,23 @@ var getRevision = function( target, options, callback ) {
 	info( target, options, function( err, data ) {
 		var rev;
 		if ( !err ) {
-			if ( data && data.entry && data.entry.$ && data.entry.$.revision ) {
+			// 'lastChangeRevision' option returns the last commit revision, instead of the working copy revision
+			var revString;
+			if ( options.lastChangeRevision ) {
+				if ( data && data.entry && data.entry.commit && data.entry.commit.$ ) {
+					revString = data.entry.commit.$.revision;
+				}
+			} else {
+				if ( data && data.entry && data.entry.$ && data.entry.$.revision ) {
+					revString = data.entry.$.revision;
+				}
+			}
+			if ( revString !== undefined ) {
 				try {
-					rev = parseInt( data.entry.$.revision, 10 );
+					rev = parseInt( revString, 10 );
 				}
 				catch ( err3 ) {
-					err = 'Invalid revision value [' + data.entry.$.revision + ']';
+					err = 'Invalid revision value [' + revString + ']';
 				}
 			} else {
 				err = 'Could not parse info result to get revision [' + JSON.stringify( data ) + ']';
@@ -517,16 +533,82 @@ var getRevision = function( target, options, callback ) {
 exports.util.getRevision = getRevision;
 
 
+// returns revision for working copy - can be mixed
+var getWorkingCopyRevision = function( wcDir, options, callback ) {
+	if ( typeof options === "function" ) {
+		callback = options;
+		options = null;
+	}
+	var execOptions = buildExecuteOptions( options );
+	var exe = options.svnversion ? options.svnversion.toString() : 'svnversion';
+	var cmd = '"' + exe + '" -n' + ( options.lastChangeRevision ? ' -c' : '' ) + ' ' + ( options.params ? options.params.join( " " ) : '' ) + '"' + wcDir + '"';
+	exec( cmd, execOptions, function( err, stdo, stde ) {
+		if ( !options.quiet ) {
+			process.stderr.write( stde.toString() );
+		}
+		var result;
+		if ( !err ) {
+			/*
+			   4123:4168     mixed revision working copy
+			   4168M         modified working copy
+			   4123S         switched working copy
+			   4123P         partial working copy, from a sparse checkout
+			   4123:4168MS   mixed revision, modified, switched working copy
+			*/
+			var input = stdo.toString();
+			var match = input.match( /(\d+):*(\d*)(\w*)/ );
+			if ( match ) {
+				result = {};
+				if ( match[1].length > 0 ) {
+					result.low = parseInt( match[1], 10 );
+				}
+				if ( match[2].length > 0 ) {
+					result.high = parseInt( match[2], 10 );
+				} else {
+					result.high = result.low;
+				}
+				if ( match[3].length > 0 ) {
+					result.flags = match[3];
+					if ( result.flags.indexOf( 'M' ) >= 0 ) {
+						result.modified = true;
+					}
+					if ( result.flags.indexOf( 'S' ) >= 0 ) {
+						result.switched = true;
+					}
+					if ( result.flags.indexOf( 'P' ) >= 0 ) {
+						result.partial = true;
+					}
+				}
+			} else {
+				err = "Unexpected value returned from svnversion " + input;
+			}
+		}
+		if ( typeof callback === 'function' ) {
+			callback( err, result );
+		}
+	} );
+};
+exports.util.getWorkingCopyRevision = getWorkingCopyRevision;
+
+
+
 var parseUrl = function( url ) {
 	var trunkMatch = url.match( /(.*)\/(trunk|branches|tags)\/*(.*)\/*(.*)$/i );
 	if ( trunkMatch ) {
+		var rootUrl = trunkMatch[1];
+		var projectName;
+		var pmatch = rootUrl.match( /\/([^\/]*)$/ );
+		if ( pmatch ) {
+			projectName = pmatch[1];
+		}
 		return {
-			rootUrl: trunkMatch[1],
+			rootUrl: rootUrl,
 			type: trunkMatch[2],
 			typeName: trunkMatch[3],
-			trunkUrl: trunkMatch[1] + "/trunk",
-			tagsUrl: trunkMatch[1] + "/tags",
-			branchesUrl: trunkMatch[1] + "/branches"
+			projectName: projectName,
+			trunkUrl: rootUrl + "/trunk",
+			tagsUrl: rootUrl + "/tags",
+			branchesUrl: rootUrl + "/branches"
 		};
 	}
 	throw new Error( "parseUrl: Url does not look like an SVN repository" );
@@ -540,7 +622,7 @@ var getTags = function( url, options, callback ) {
 	}
 	var tagsUrl = parseUrl( url ).tagsUrl;
 	list( tagsUrl, options, function( err, data ) {
-		var result;
+		var result = [];
 		if ( !err && data && data.list && Array.isArray( data.list.entry ) ) {
 			result = data.list.entry.filter( function( entry ) {
 					return entry && entry.$ && entry.$.kind === "dir";
