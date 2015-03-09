@@ -28,7 +28,8 @@ var execute = function( cmd, options, callback ) {
 	options.cwd = options.cwd || process.cwd();
 	var execOptions = {
 		cwd: options.cwd,
-		shell: options.shell
+		shell: options.shell,
+		maxBuffer: options.maxBuffer || ( 5 * 1024 * 1024 ) // defaults to 5MB
 	};
 	
 	if ( !options.noStandardOptions ) {
