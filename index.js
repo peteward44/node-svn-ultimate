@@ -140,7 +140,9 @@ var checkout = function( url, dir, options, callback ) {
 		callback = options;
 	}
 	addExtraOptions( [ 'force', 'quiet', 'revision', 'depth', 'ignoreExternals' ], options );
-	fs.mkdirsSync( dir );
+	if ( !fs.existsSync( dir ) ) {
+		fs.mkdirsSync( dir );
+	}
 	executeSvn( [ 'checkout', url, dir ], options, callback );
 };
 exports.commands.checkout = checkout;
