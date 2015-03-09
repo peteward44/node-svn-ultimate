@@ -494,7 +494,7 @@ var mucc = function( commandArray, commitMessage, options, callback ) {
 	if ( !Array.isArray( commandArray ) ) {
 		commandArray = [commandArray];
 	}
-	executeMucc( commandArray.concat( [ '-m "' + commitMessage + '"' ] ), options, callback );
+	executeMucc( [ '-m "' + commitMessage + '"' ].concat( commandArray ), options, callback );
 };
 exports.commands.mucc = mucc;
 
