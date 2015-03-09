@@ -19,7 +19,9 @@ var xmlToJson = function( dataXml, callback ) {
 	);
 };
 
-var buildExecuteOptions = function( options ) {
+var execute = function( cmd, options, callback ) {
+
+	options = options || {};
 	if ( options.shell === undefined && os.platform === "win32" ) {
 		options.shell = 'start "" /B '  // windows only - this makes it so a cmd window won't pop up when running as a service or through pm2
 	}
@@ -28,26 +30,21 @@ var buildExecuteOptions = function( options ) {
 		cwd: options.cwd,
 		shell: options.shell
 	};
-	return execOptions;
-};
-
-var execute = function( cmd, options, callback ) {
-
-	options = options || {};
-	var execOptions = buildExecuteOptions( options );
 	
-	cmd += ' --non-interactive';
-	if ( options.trustServerCert ) {
-		cmd += ' --trust-server-cert';
-	}
-	if ( typeof options.username === 'string' ) {
-		cmd += ' --username=' + options.username;
-	}
-	if ( typeof options.password === 'string' ) {
-		cmd += ' --password=' + options.password;
+	if ( !options.noStandardOptions ) {
+		cmd += ' --non-interactive';
+		if ( options.trustServerCert ) {
+			cmd += ' --trust-server-cert';
+		}
+		if ( typeof options.username === 'string' ) {
+			cmd += ' --username=' + options.username;
+		}
+		if ( typeof options.password === 'string' ) {
+			cmd += ' --password=' + options.password;
+		}
 	}
 	if ( options.params ) {
-		cmd += options.params.join( " " );
+		cmd += ' ' + options.params.join( " " );
 	}
 	exec( cmd, execOptions, function( err, stdo, stde ) {
 		if ( !options.quiet ) {
@@ -63,6 +60,7 @@ var execute = function( cmd, options, callback ) {
 var executeSvn = function( params, options, callback ) {
 	options = options || {};
 	var cmd = ( options.svn || 'svn' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
+	//console.log( cmd );
 	execute( cmd, options, callback );
 };
 
@@ -83,6 +81,14 @@ var executeSvnXml = function( params, options, callback ) {
 var executeMucc = function( params, options, callback ) {
 	options = options || {};
 	var cmd = ( options.svnmucc || 'svnmucc' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
+	execute( cmd, options, callback );
+};
+
+
+var execSvnVersion = function( params, options, callback ) {
+	options = options || {};
+	var cmd = ( options.svnversion || 'svnversion' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
+	options.noStandardOptions = true;
 	execute( cmd, options, callback );
 };
 
@@ -496,7 +502,7 @@ exports.commands.mucc = mucc;
 // Utilities
 
 exports.util = {};
-
+// 'lastChangeRevision' option returns the last commit revision, instead of the working copy revision
 var getRevision = function( target, options, callback ) {
 	if ( typeof options === "function" ) {
 		callback = options;
@@ -505,10 +511,9 @@ var getRevision = function( target, options, callback ) {
 	info( target, options, function( err, data ) {
 		var rev;
 		if ( !err ) {
-			// 'lastChangeRevision' option returns the last commit revision, instead of the working copy revision
 			var revString;
 			if ( options.lastChangeRevision ) {
-				if ( data && data.entry && data.entry.commit && data.entry.commit.$ ) {
+				if ( data && data.entry && data.entry.commit && data.entry.commit.$ && data.entry.commit.$.revision ) {
 					revString = data.entry.commit.$.revision;
 				}
 			} else {
@@ -533,82 +538,59 @@ var getRevision = function( target, options, callback ) {
 exports.util.getRevision = getRevision;
 
 
-// returns revision for working copy - can be mixed
 var getWorkingCopyRevision = function( wcDir, options, callback ) {
 	if ( typeof options === "function" ) {
 		callback = options;
 		options = null;
 	}
-	var execOptions = buildExecuteOptions( options );
-	var exe = options.svnversion ? options.svnversion.toString() : 'svnversion';
-	var cmd = '"' + exe + '" -n' + ( options.lastChangeRevision ? ' -c' : '' ) + ' ' + ( options.params ? options.params.join( " " ) : '' ) + '"' + wcDir + '"';
-	exec( cmd, execOptions, function( err, stdo, stde ) {
-		if ( !options.quiet ) {
-			process.stderr.write( stde.toString() );
-		}
+	if ( !Array.isArray( wcDir ) ) {
+		wcDir = [wcDir];
+	}
+	var args = [ '-n' ];
+	if ( options.lastChangeRevision ) {
+		args.push( '-c' );
+	}
+	execSvnVersion( wcDir.concat( args ), options, function( err, data ) {
 		var result;
 		if ( !err ) {
-			/*
-			   4123:4168     mixed revision working copy
-			   4168M         modified working copy
-			   4123S         switched working copy
-			   4123P         partial working copy, from a sparse checkout
-			   4123:4168MS   mixed revision, modified, switched working copy
-			*/
-			var input = stdo.toString();
-			var match = input.match( /(\d+):*(\d*)(\w*)/ );
+			var match = data.match( /(\d+):?(\d*)(\w*)/ );
 			if ( match ) {
 				result = {};
-				if ( match[1].length > 0 ) {
-					result.low = parseInt( match[1], 10 );
-				}
+				result.low = parseInt( match[1] );
 				if ( match[2].length > 0 ) {
-					result.high = parseInt( match[2], 10 );
+					result.high = parseInt( match[2] );
 				} else {
 					result.high = result.low;
 				}
-				if ( match[3].length > 0 ) {
-					result.flags = match[3];
-					if ( result.flags.indexOf( 'M' ) >= 0 ) {
-						result.modified = true;
-					}
-					if ( result.flags.indexOf( 'S' ) >= 0 ) {
-						result.switched = true;
-					}
-					if ( result.flags.indexOf( 'P' ) >= 0 ) {
-						result.partial = true;
-					}
+				result.flags = match[3];
+				if ( result.flags > 0 ) {
+					result.modified = result.flags.indexOf( 'M' ) >= 0;
+					result.partial = result.flags.indexOf( 'P' ) >= 0;
+					result.switched = result.flags.indexOf( 'S' ) >= 0;
 				}
 			} else {
-				err = "Unexpected value returned from svnversion " + input;
+				err = data;
 			}
 		}
-		if ( typeof callback === 'function' ) {
-			callback( err, result );
-		}
+		callback( err, result );
 	} );
 };
 exports.util.getWorkingCopyRevision = getWorkingCopyRevision;
-
 
 
 var parseUrl = function( url ) {
 	var trunkMatch = url.match( /(.*)\/(trunk|branches|tags)\/*(.*)\/*(.*)$/i );
 	if ( trunkMatch ) {
 		var rootUrl = trunkMatch[1];
-		var projectName;
-		var pmatch = rootUrl.match( /\/([^\/]*)$/ );
-		if ( pmatch ) {
-			projectName = pmatch[1];
-		}
+		var projectName = rootUrl.match( /\/([^\/]+)$/ )[1];
 		return {
 			rootUrl: rootUrl,
+			projectName: projectName,
 			type: trunkMatch[2],
 			typeName: trunkMatch[3],
-			projectName: projectName,
-			trunkUrl: rootUrl + "/trunk",
-			tagsUrl: rootUrl + "/tags",
-			branchesUrl: rootUrl + "/branches"
+			trunkUrl: trunkMatch[1] + "/trunk",
+			tagsUrl: trunkMatch[1] + "/tags",
+			branchesUrl: trunkMatch[1] + "/branches"
 		};
 	}
 	throw new Error( "parseUrl: Url does not look like an SVN repository" );
