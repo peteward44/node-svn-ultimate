@@ -28,7 +28,8 @@ var execute = function( cmd, options, callback ) {
 	options.cwd = options.cwd || process.cwd();
 	var execOptions = {
 		cwd: options.cwd,
-		shell: options.shell
+		shell: options.shell,
+		maxBuffer: options.maxBuffer || ( 5 * 1024 * 1024 ) // defaults to 5MB
 	};
 	
 	if ( !options.noStandardOptions ) {
@@ -496,7 +497,7 @@ var mucc = function( commandArray, commitMessage, options, callback ) {
 	if ( !Array.isArray( commandArray ) ) {
 		commandArray = [commandArray];
 	}
-	executeMucc( commandArray.concat( [ '-m "' + commitMessage + '"' ] ), options, callback );
+	executeMucc( [ '-m "' + commitMessage + '"' ].concat( commandArray ), options, callback );
 };
 exports.commands.mucc = mucc;
 
