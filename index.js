@@ -2,7 +2,7 @@
 'use strict';
 
 var exec = require( 'child_process' ).exec;
-var fs = require( 'fs.extra' );
+var fs = require( 'fs-extra' );
 var os = require( 'os' );
 var xml2js = require( 'xml2js' );
 var semver = require( 'semver' );
@@ -23,7 +23,7 @@ var execute = function( cmd, options, callback ) {
 
 	options = options || {};
 	if ( options.shell === undefined && os.platform === "win32" ) {
-		options.shell = 'start "" /B '  // windows only - this makes it so a cmd window won't pop up when running as a service or through pm2
+		options.shell = 'start "" /B ';  // windows only - this makes it so a cmd window won't pop up when running as a service or through pm2
 	}
 	options.cwd = options.cwd || process.cwd();
 	var execOptions = {
@@ -52,7 +52,7 @@ var execute = function( cmd, options, callback ) {
 			process.stderr.write( stde.toString() );
 		}
 		if ( typeof callback === 'function' ) {
-			callback( err, stdo.toString() );
+			callback( err, options.stdoutAsBuffer ? stdo : stdo.toString() );
 		}
 	} );
 };
@@ -61,7 +61,6 @@ var execute = function( cmd, options, callback ) {
 var executeSvn = function( params, options, callback ) {
 	options = options || {};
 	var cmd = ( options.svn || 'svn' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
-	//console.log( cmd );
 	execute( cmd, options, callback );
 };
 
@@ -127,9 +126,15 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 						options.params.push('--ignore-externals');
 					}
 					break;
+				case 'msg':
+					if ( options.msg ) {
+						options.params.push('-m', '"' + options.msg + '"');
+					}
+					break;
 			}
 		} );
 	}
+	return options;
 };
 
 
@@ -139,7 +144,9 @@ exports.commands = {};
 var checkout = function( url, dir, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'force', 'quiet', 'revision', 'depth', 'ignoreExternals' ], options );
 	if ( !fs.existsSync( dir ) ) {
 		fs.mkdirsSync( dir );
@@ -152,7 +159,9 @@ exports.commands.co = checkout;
 var update = function( dir, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'force', 'quiet', 'revision', 'depth', 'ignoreExternals' ], options );
 	executeSvn( [ 'update', dir ], options, callback );
 };
@@ -164,7 +173,9 @@ var add = function( files, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'force', 'quiet', 'depth' ], options );
 	executeSvn( [ 'add' ].concat( files ), options, callback );
 };
@@ -178,7 +189,9 @@ var cat = function( targets, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'revision' ], options );
 	executeSvn( [ 'cat' ].concat( targets ), options, callback );
 };
@@ -189,7 +202,9 @@ exports.commands.cat = cat;
 var cleanup = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	executeSvn( [ 'cleanup', wc ], options, callback );
 };
 exports.commands.cleanup = cleanup;
@@ -200,8 +215,12 @@ var commit = function( files, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
 	}
-	addExtraOptions( [ 'quiet', 'depth' ], options );
+	options = options || {};
+	addExtraOptions( [ 'quiet', 'depth', 'msg' ], options );
 	executeSvn( [ 'commit' ].concat( files ), options, callback );
 };
 exports.commands.commit = commit;
@@ -213,9 +232,13 @@ var copy = function( srcs, dst, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
 	}
-	addExtraOptions( [ 'revision', 'quiet', 'depth' ], options );
-	executeSvn( [ 'copy' ].concat( srcs ).push( dst ), options, callback );
+	options = options || {};
+	addExtraOptions( [ 'revision', 'quiet', 'depth', 'msg' ], options );
+	executeSvn( [ 'copy' ].concat( srcs ).concat( [ dst ] ), options, callback );
 };
 exports.commands.copy = copy;
 exports.commands.cp = copy;
@@ -226,21 +249,36 @@ var del = function( srcs, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
 	}
-	addExtraOptions( [ 'quiet', 'force' ], options );
+	options = options || {};
+	addExtraOptions( [ 'quiet', 'force', 'msg' ], options );
 	executeSvn( [ 'del' ].concat( srcs ), options, callback );
 };
 exports.commands.del = del;
 exports.commands.remove = del;
 exports.commands.rm = del;
 
-// TODO: diff
+// var diff = function( src, dest, options, callback ) {
+	// if ( typeof options === 'function' ) {
+		// callback = options;
+		// options = null;
+	// }
+	// options = options || {};
+	// addExtraOptions( [ 'revision', 'quiet', 'force' ], options );
+	// executeSvn( [ 'export', src, dst ], options, callback );
+// };
+// exports.commands.diff = diff;
 
 // export method
 var exp = function( src, dst, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'revision', 'quiet', 'force' ], options );
 	executeSvn( [ 'export', src, dst ], options, callback );
 };
@@ -251,8 +289,12 @@ exports.commands.exp = exp;
 var imp = function( src, dst, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
 	}
-	addExtraOptions( [ 'depth', 'quiet', 'force' ], options );
+	options = options || {};
+	addExtraOptions( [ 'depth', 'quiet', 'force', 'msg' ], options );
 	executeSvn( [ 'import', src, dst ], options, callback );
 };
 exports.commands.import = imp;
@@ -264,7 +306,9 @@ var info = function( targets, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'depth', 'revision' ], options );
 	executeSvnXml( [ 'info' ].concat( targets ), options, callback );
 };
@@ -276,7 +320,9 @@ var list = function( targets, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'depth', 'revision' ], options );
 	executeSvnXml( [ 'list' ].concat( targets ), options, callback );
 };
@@ -289,8 +335,12 @@ var lock = function( targets, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
 	}
-	addExtraOptions( [ 'force' ], options );
+	options = options || {};
+	addExtraOptions( [ 'force', 'msg' ], options );
 	executeSvn( [ 'lock' ].concat( targets ), options, callback );
 };
 exports.commands.lock = lock;
@@ -301,7 +351,9 @@ var log = function( targets, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth', 'revision' ], options );
 	executeSvnXml( [ 'log' ].concat( targets ), options, callback );
 };
@@ -316,8 +368,12 @@ var mkdir = function( targets, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
 	}
-	addExtraOptions( [ 'quiet' ], options );
+	options = options || {};
+	addExtraOptions( [ 'quiet', 'msg' ], options );
 	executeSvn( [ 'mkdir' ].concat( targets ), options, callback );
 };
 exports.commands.mkdir = mkdir;
@@ -328,9 +384,13 @@ var move = function( srcs, dst, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
 	}
-	addExtraOptions( [ 'quiet', 'force' ], options );
-	executeSvn( [ 'move' ].concat( srcs ).push( dst ), options, callback );
+	options = options || {};
+	addExtraOptions( [ 'quiet', 'force', 'msg' ], options );
+	executeSvn( [ 'move' ].concat( srcs ).concat( [ dst ] ), options, callback );
 };
 exports.commands.move = move;
 exports.commands.mv = move;
@@ -340,7 +400,9 @@ exports.commands.ren = move;
 var patch = function( patchFile, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	executeSvn( [ 'patch', patchFile, wc ], options, callback );
 };
 exports.commands.patch = patch;
@@ -348,7 +410,9 @@ exports.commands.patch = patch;
 var propdel = function( propName, target, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth' ], options, true );
 	executeSvn( [ 'propdel', propName, target ], options, callback );
 };
@@ -361,10 +425,12 @@ exports.commands.pd = propdel;
 var propget = function( propName, targets, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
 	}
+	options = options || {};
 	addExtraOptions( [ 'depth', 'revision' ], options, true );
 	executeSvnXml( [ 'propget', propName ].concat( targets ), options, callback );
 };
@@ -375,10 +441,12 @@ exports.commands.pg = propget;
 var proplist = function( targets, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth', 'revision' ], options, true );
 	executeSvnXml( [ 'proplist' ].concat( targets ), options, callback );
 };
@@ -389,7 +457,9 @@ exports.commands.pl = proplist;
 var propset = function( propName, propVal, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth', 'revision', 'force' ], options, true );
 	executeSvn( [ 'propset', propName, propVal, wc ], options, callback );
 };
@@ -400,7 +470,9 @@ exports.commands.pl = proplist;
 var relocate = function( url, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	executeSvn( [ 'relocate', url, wc ], options, callback );
 };
 exports.commands.relocate = relocate;
@@ -410,7 +482,9 @@ exports.commands.relocate = relocate;
 var revert = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth' ], options );
 	executeSvn( [ 'revert', wc ], options, callback );
 };
@@ -419,7 +493,9 @@ exports.commands.revert = revert;
 var status = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth' ], options );
 	executeSvnXml( [ 'status', wc ], options, callback );
 };
@@ -430,7 +506,9 @@ exports.commands.st = status;
 var switchf = function( url, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth', 'revision', 'force' ], options );
 	executeSvn( [ 'switch', url, wc ], options, callback );
 };
@@ -439,10 +517,12 @@ exports.commands.switch = switchf;
 var unlock = function( targets, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
 	}
+	options = options || {};
 	addExtraOptions( [ 'force' ], options );
 	executeSvn( [ 'unlock' ].concat( targets ), options, callback );
 };
@@ -451,10 +531,12 @@ exports.commands.unlock = unlock;
 var update = function( wcs, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
 	if ( !Array.isArray( wcs ) ) {
 		wcs = [wcs];
 	}
+	options = options || {};
 	addExtraOptions( [ 'force', 'revision', 'depth' ], options );
 	executeSvn( [ 'update' ].concat( wcs ), options, callback );
 };
@@ -464,10 +546,12 @@ exports.commands.up = update;
 var upgrade = function( wcs, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
 	if ( !Array.isArray( wcs ) ) {
 		wcs = [wcs];
 	}
+	options = options || {};
 	addExtraOptions( [ 'quiet' ], options );
 	executeSvn( [ 'upgrade' ].concat( wcs ), options, callback );
 };
@@ -493,7 +577,9 @@ var mucc = function( commandArray, commitMessage, options, callback ) {
 	}
 	if ( typeof options === 'function' ) {
 		callback = options;
+		options = null;
 	}
+	options = options || {};
 	if ( !Array.isArray( commandArray ) ) {
 		commandArray = [commandArray];
 	}
@@ -511,6 +597,7 @@ var getRevision = function( target, options, callback ) {
 		callback = options;
 		options = null;
 	}
+	options = options || {};
 	info( target, options, function( err, data ) {
 		var rev;
 		if ( !err ) {
@@ -546,6 +633,7 @@ var getWorkingCopyRevision = function( wcDir, options, callback ) {
 		callback = options;
 		options = null;
 	}
+	options = options || {};
 	if ( !Array.isArray( wcDir ) ) {
 		wcDir = [wcDir];
 	}
@@ -605,6 +693,7 @@ var getTags = function( url, options, callback ) {
 		callback = options;
 		options = null;
 	}
+	options = options || {};
 	var tagsUrl = parseUrl( url ).tagsUrl;
 	list( tagsUrl, options, function( err, data ) {
 		var result = [];
@@ -624,6 +713,7 @@ var getLatestTag = function( url, options, callback ) {
 		callback = options;
 		options = null;
 	}
+	options = options || {};
 	getTags( url, options, function( err, tagArray ) {
 		var latest;
 		if ( !err && Array.isArray( tagArray ) && tagArray.length > 0 ) {
