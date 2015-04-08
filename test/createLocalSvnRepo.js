@@ -23,7 +23,7 @@ exports.create = function( tempdir, callback ) {
 	proc.on( 'exit', function() {
 		var formattedPath = path.resolve( path.join( tempdir, dirname ) );
 		formattedPath = formattedPath.replace( /\\/g, '/' );
-		callback( null, 'file:///' + encodeURIComponent( formattedPath ) );
+		callback( null, 'file:///' + formattedPath );
 	} );
 };
 
