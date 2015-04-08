@@ -93,6 +93,20 @@ var execSvnVersion = function( params, options, callback ) {
 };
 
 
+var checkSvnVersion = function( options, reqVersion, callback ) {
+	options = options || {};
+	options.noStandardOptions = true;
+	var cmd = ( options.svn || 'svn' ) + ' --version --quiet';
+	execute( cmd, options, function( err, stdo ) {
+		if ( err ) {
+			return callback( err );
+		}
+		stdo = stdo.trim();
+		callback( null, semver.satisfies( stdo, reqVersion ) );
+	} );
+};
+
+
 var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 	if ( options ) {
 		options.params = options.params || [];
@@ -544,6 +558,7 @@ exports.commands.update = update;
 exports.commands.up = update;
 
 var upgrade = function( wcs, options, callback ) {
+	// upgrade only works for versions of svn >= 1.7
 	if ( typeof options === 'function' ) {
 		callback = options;
 		options = null;
@@ -553,7 +568,17 @@ var upgrade = function( wcs, options, callback ) {
 	}
 	options = options || {};
 	addExtraOptions( [ 'quiet' ], options );
-	executeSvn( [ 'upgrade' ].concat( wcs ), options, callback );
+
+	checkSvnVersion( options, ">=1.7.0", function( err, isValid ) {
+		if ( err ) {
+			return callback( err );
+		}
+		if ( isValid ) {
+			executeSvn( [ 'upgrade' ].concat( wcs ), options, callback );
+		} else {
+			callback();
+		}
+	} );
 };
 exports.commands.upgrade = upgrade;
 
