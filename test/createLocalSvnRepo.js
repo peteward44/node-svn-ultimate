@@ -1,6 +1,6 @@
 /*global describe:false, it:false */
 
-// Note: These tests require a functional Artifactory server to test against
+// Creates a local SVN repositiory using svnadmin to run tests against
 'use strict';
 
 var svn = require('../');
