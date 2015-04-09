@@ -35,6 +35,7 @@
     "url": "https://github.com/peteward44/node-svn-ultimate/issues"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+	"docs": "jsdox --templateDir ./doctemplates --output ./docoutput ./index.js"
   }
 }
