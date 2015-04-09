@@ -155,6 +155,12 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 exports.commands = {};
 
 
+/** 
+ * @param url {string}
+ * @param dir {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var checkout = function( url, dir, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -170,6 +176,11 @@ var checkout = function( url, dir, options, callback ) {
 exports.commands.checkout = checkout;
 exports.commands.co = checkout;
 
+/** 
+ * @param dir {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var update = function( dir, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -181,6 +192,11 @@ var update = function( dir, options, callback ) {
 };
 exports.commands.update = update;
 
+/** 
+ * @param files {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var add = function( files, options, callback ) {
 	if ( !Array.isArray( files ) ) {
 		files = [files];
@@ -197,6 +213,11 @@ exports.commands.add = add;
 
 // TODO: blame
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var cat = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
@@ -213,6 +234,11 @@ exports.commands.cat = cat;
 
 // TODO: changelist (cl)
 
+/** 
+ * @param wc {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var cleanup = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -223,6 +249,11 @@ var cleanup = function( wc, options, callback ) {
 };
 exports.commands.cleanup = cleanup;
 
+/** 
+ * @param files {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var commit = function( files, options, callback ) {
 	if ( !Array.isArray( files ) ) {
 		files = [files];
@@ -240,6 +271,12 @@ var commit = function( files, options, callback ) {
 exports.commands.commit = commit;
 exports.commands.ci = commit;
 
+/** 
+ * @param srcs {Array|string}
+ * @param dst {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var copy = function( srcs, dst, options, callback ) {
 	if ( !Array.isArray( srcs ) ) {
 		srcs = [srcs];
@@ -257,6 +294,11 @@ var copy = function( srcs, dst, options, callback ) {
 exports.commands.copy = copy;
 exports.commands.cp = copy;
 
+/** 
+ * @param srcs {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var del = function( srcs, options, callback ) {
 	if ( !Array.isArray( srcs ) ) {
 		srcs = [srcs];
@@ -281,12 +323,18 @@ exports.commands.rm = del;
 		// options = null;
 	// }
 	// options = options || {};
-	// addExtraOptions( [ 'revision', 'quiet', 'force' ], options );
+	// addExtraOptions( [ 'revision', 'depth', 'force' ], options );
 	// executeSvn( [ 'export', src, dst ], options, callback );
 // };
 // exports.commands.diff = diff;
 
-// export method
+
+/** 
+ * @param src {string}
+ * @param dst {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var exp = function( src, dst, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -299,7 +347,12 @@ var exp = function( src, dst, options, callback ) {
 exports.commands.export = exp;
 exports.commands.exp = exp;
 
-// import method
+/** 
+ * @param src {string}
+ * @param dst {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var imp = function( src, dst, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -314,6 +367,11 @@ var imp = function( src, dst, options, callback ) {
 exports.commands.import = imp;
 exports.commands.imp = imp;
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var info = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
@@ -328,6 +386,11 @@ var info = function( targets, options, callback ) {
 };
 exports.commands.info = info;
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var list = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
@@ -343,6 +406,11 @@ var list = function( targets, options, callback ) {
 exports.commands.list = list;
 exports.commands.ls = list;
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var lock = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
@@ -359,6 +427,11 @@ var lock = function( targets, options, callback ) {
 };
 exports.commands.lock = lock;
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var log = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
@@ -376,6 +449,11 @@ exports.commands.log = log;
 // TODO: merge
 // TODO: mergeinfo
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var mkdir = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
 		targets = [targets];
@@ -392,6 +470,12 @@ var mkdir = function( targets, options, callback ) {
 };
 exports.commands.mkdir = mkdir;
 
+/** 
+ * @param srcs {Array|string}
+ * @param dst {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var move = function( srcs, dst, options, callback ) {
 	if ( !Array.isArray( srcs ) ) {
 		srcs = [srcs];
@@ -411,16 +495,22 @@ exports.commands.mv = move;
 exports.commands.rename = move;
 exports.commands.ren = move;
 
-var patch = function( patchFile, wc, options, callback ) {
-	if ( typeof options === 'function' ) {
-		callback = options;
-		options = null;
-	}
-	options = options || {};
-	executeSvn( [ 'patch', patchFile, wc ], options, callback );
-};
-exports.commands.patch = patch;
+// var patch = function( patchFile, wc, options, callback ) {
+	// if ( typeof options === 'function' ) {
+		// callback = options;
+		// options = null;
+	// }
+	// options = options || {};
+	// executeSvn( [ 'patch', patchFile, wc ], options, callback );
+// };
+// exports.commands.patch = patch;
 
+/** 
+ * @param propName {string}
+ * @param target {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var propdel = function( propName, target, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -436,6 +526,12 @@ exports.commands.pd = propdel;
 
 // propedit (pedit, pe) - not supported
 
+/** 
+ * @param propName {string}
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var propget = function( propName, targets, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -452,6 +548,11 @@ exports.commands.propget = propget;
 exports.commands.pget = propget;
 exports.commands.pg = propget;
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var proplist = function( targets, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -468,6 +569,13 @@ exports.commands.proplist = proplist;
 exports.commands.plist = proplist;
 exports.commands.pl = proplist;
 
+/** 
+ * @param propName {string}
+ * @param propVal {string}
+ * @param wc {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var propset = function( propName, propVal, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -477,10 +585,16 @@ var propset = function( propName, propVal, wc, options, callback ) {
 	addExtraOptions( [ 'quiet', 'depth', 'revision', 'force' ], options, true );
 	executeSvn( [ 'propset', propName, propVal, wc ], options, callback );
 };
-exports.commands.proplist = proplist;
-exports.commands.plist = proplist;
-exports.commands.pl = proplist;
+exports.commands.propset = propset;
+exports.commands.pset = propset;
+exports.commands.ps = propset;
 
+/** 
+ * @param url {string}
+ * @param wc {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var relocate = function( url, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -493,6 +607,11 @@ exports.commands.relocate = relocate;
 
 // resolve/resolved - probably doesn't make sense to automate
 
+/** 
+ * @param wc {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var revert = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -504,6 +623,11 @@ var revert = function( wc, options, callback ) {
 };
 exports.commands.revert = revert;
 
+/** 
+ * @param wc {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var status = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -517,6 +641,12 @@ exports.commands.status = status;
 exports.commands.stat = status;
 exports.commands.st = status;
 
+/** 
+ * @param url {string}
+ * @param wc {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var switchf = function( url, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -528,6 +658,11 @@ var switchf = function( url, wc, options, callback ) {
 };
 exports.commands.switch = switchf;
 
+/** 
+ * @param targets {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var unlock = function( targets, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -542,6 +677,11 @@ var unlock = function( targets, options, callback ) {
 };
 exports.commands.unlock = unlock;
 
+/** 
+ * @param wcs {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var update = function( wcs, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
@@ -557,6 +697,11 @@ var update = function( wcs, options, callback ) {
 exports.commands.update = update;
 exports.commands.up = update;
 
+/** 
+ * @param wcs {Array|string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var upgrade = function( wcs, options, callback ) {
 	// upgrade only works for versions of svn >= 1.7
 	if ( typeof options === 'function' ) {
@@ -584,7 +729,7 @@ exports.commands.upgrade = upgrade;
 
 
 // svnmucc
-/**
+/*
 	commandArray can contain array of the following
   cp REV SRC-URL DST-URL : copy SRC-URL@REV to DST-URL
   mkdir URL              : create new directory URL
@@ -596,6 +741,13 @@ exports.commands.upgrade = upgrade;
   propsetf NAME FILE URL : set property NAME on URL to value read from FILE
   propdel NAME URL       : delete property NAME from URL
 */
+
+/** 
+ * @param commandArray {Array}
+ * @param commitMessage {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var mucc = function( commandArray, commitMessage, options, callback ) {
 	if ( typeof commitMessage !== 'string' ) {
 		throw new Error( "svnUltimate.command.mucc - commitMessage must be a string" );
@@ -617,6 +769,12 @@ exports.commands.mucc = mucc;
 
 exports.util = {};
 // 'lastChangeRevision' option returns the last commit revision, instead of the working copy revision
+
+/** 
+ * @param target {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var getRevision = function( target, options, callback ) {
 	if ( typeof options === "function" ) {
 		callback = options;
@@ -653,6 +811,11 @@ var getRevision = function( target, options, callback ) {
 exports.util.getRevision = getRevision;
 
 
+/** 
+ * @param wcDir {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var getWorkingCopyRevision = function( wcDir, options, callback ) {
 	if ( typeof options === "function" ) {
 		callback = options;
@@ -694,6 +857,10 @@ var getWorkingCopyRevision = function( wcDir, options, callback ) {
 exports.util.getWorkingCopyRevision = getWorkingCopyRevision;
 
 
+/** 
+ * @param url {string}
+ * @returns {string}
+ */
 var parseUrl = function( url ) {
 	var trunkMatch = url.match( /(.*)\/(trunk|branches|tags)\/*(.*)\/*(.*)$/i );
 	if ( trunkMatch ) {
@@ -713,6 +880,11 @@ var parseUrl = function( url ) {
 };
 exports.util.parseUrl = parseUrl;
 
+/** 
+ * @param url {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var getTags = function( url, options, callback ) {
 	if ( typeof options === "function" ) {
 		callback = options;
@@ -733,6 +905,11 @@ var getTags = function( url, options, callback ) {
 exports.util.getTags = getTags;
 
 
+/** 
+ * @param url {string}
+ * @param options {object=}
+ * @param callback {function=}
+ */
 var getLatestTag = function( url, options, callback ) {
 	if ( typeof options === "function" ) {
 		callback = options;

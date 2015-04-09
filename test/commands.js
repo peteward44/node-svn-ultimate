@@ -99,7 +99,7 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 		
-		it('cat fails', function(done) {
+		it('cat fails on non-existant file', function(done) {
 			svn.commands.cat( testServer + "/bower2.json", { quiet: true }, function( err, data ) {
 				should.exist(err);
 				done();
@@ -178,7 +178,7 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 
-		it('export', function(done) {
+		it('export - single file', function(done) {
 			var exportPath = path.join( tempTestDir, 'test2.txt' );
 			svn.commands.export( testServer + "/test2.txt", exportPath, function( err ) {
 				should.not.exist(err);
@@ -188,7 +188,7 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 		
-		it('import', function(done) {
+		it('import - single file', function(done) {
 			var importPath = path.join( tempTestDir, 'test2.txt' );
 			svn.commands.import( importPath, testServer + "/test20.txt", 'import msg', function( err ) {
 				should.not.exist(err);
@@ -201,7 +201,7 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 		
-		it('mucc', function(done) {
+		it('mucc - single mkdir command', function(done) {
 			svn.commands.mucc( [ "mkdir " + testServer + "/testdir" ], "mucc commit", function( err, data ) {
 				should.not.exist(err);
 				//console.log( data );
@@ -209,7 +209,7 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 		
-		it('update', function(done) {
+		it('update working copy', function(done) {
 			svn.commands.update( checkoutTestDir, function( err ) {
 				should.not.exist(err);
 				should.ok( fs.statSync( path.join( checkoutTestDir, "test20.txt" ) ).isFile() );
@@ -292,6 +292,53 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 
+		it('propset', function(done) {
+			var p = path.join( checkoutTestDir, "newdir" );
+			svn.commands.propset( 'testprop', 'myvalue', p, function( err ) {
+				should.not.exist(err);
+				done();
+			} );
+		});
+		
+		it('propget', function(done) {
+			var p = path.join( checkoutTestDir, "newdir" );
+			svn.commands.propget( 'testprop', p, function( err, data ) {
+				should.not.exist(err);
+				should.exist(data);
+				done();
+			} );
+		});
+				
+		it('proplist', function(done) {
+			var p = path.join( checkoutTestDir, "newdir" );
+			svn.commands.proplist( p, function( err, data ) {
+				should.not.exist(err);
+				should.exist(data);
+				done();
+			} );
+		});
+				
+		it('propdel', function(done) {
+			var p = path.join( checkoutTestDir, "newdir" );
+			svn.commands.propdel( 'testprop', p, function( err ) {
+				should.not.exist(err);
+				done();
+			} );
+		});
+
+		// it('relocate', function(done) {
+			// svn.commands.relocate( p, function( err, data ) {
+				// should.not.exist(err);
+				// done();
+			// } );
+		// });
+		
+		// it('switch', function(done) {
+			// svn.commands.switch( p, function( err, data ) {
+				// should.not.exist(err);
+				// done();
+			// } );
+		// });
 	});
 	
 	describe( 'util', function() {
