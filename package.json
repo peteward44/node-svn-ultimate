@@ -36,6 +36,6 @@
   },
   "scripts": {
     "test": "mocha",
-	"docs": "jsdox --templateDir ./doctemplates --output ./docoutput ./index.js"
+	"docs": "jsdoc2md ./index.js > api.md"
   }
 }

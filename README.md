@@ -73,3 +73,459 @@ svnUltimate.util.getLatestTag( 'https://my.url/svn/repo/trunk', function( err, l
 
 ```
 
+
+
+## Methods
+<dl>
+<dt><a href="#commands">commands</a> : <code>object</code></dt>
+<dd><p>Exposes the commands for the command line svn tool.</p>
+</dd>
+<dt><a href="#util">util</a> : <code>object</code></dt>
+<dd><p>Exposes some custom utility methods</p>
+</dd>
+</dl>
+<a name="commands"></a>
+## commands : <code>object</code>
+Exposes the commands for the command line svn tool.
+
+**Kind**: global namespace  
+
+* [commands](#commands) : <code>object</code>
+  * [.checkout(url, dir, [options], [callback])](#commands.checkout)
+  * [.add(files, [options], [callback])](#commands.add)
+  * [.cat(targets, [options], [callback])](#commands.cat)
+  * [.cleanup(wc, [options], [callback])](#commands.cleanup)
+  * [.commit(files, [options], [callback])](#commands.commit)
+  * [.copy(srcs, dst, [options], [callback])](#commands.copy)
+  * [.del(srcs, [options], [callback])](#commands.del)
+  * [.export(src, dst, [options], [callback])](#commands.export)
+  * [.import(src, dst, [options], [callback])](#commands.import)
+  * [.info(targets, [options], [callback])](#commands.info)
+  * [.list(targets, [options], [callback])](#commands.list)
+  * [.lock(targets, [options], [callback])](#commands.lock)
+  * [.log(targets, [options], [callback])](#commands.log)
+  * [.mkdir(targets, [options], [callback])](#commands.mkdir)
+  * [.move(srcs, dst, [options], [callback])](#commands.move)
+  * [.propdel(propName, target, [options], [callback])](#commands.propdel)
+  * [.propget(propName, targets, [options], [callback])](#commands.propget)
+  * [.proplist(targets, [options], [callback])](#commands.proplist)
+  * [.propset(propName, propVal, wc, [options], [callback])](#commands.propset)
+  * [.relocate(url, wc, [options], [callback])](#commands.relocate)
+  * [.revert(wc, [options], [callback])](#commands.revert)
+  * [.status(wc, [options], [callback])](#commands.status)
+  * [.switch(url, wc, [options], [callback])](#commands.switch)
+  * [.unlock(targets, [options], [callback])](#commands.unlock)
+  * [.update(wcs, [options], [callback])](#commands.update)
+  * [.upgrade(wcs, [options], [callback])](#commands.upgrade)
+  * [.mucc(commandArray, commitMessage, [options], [callback])](#commands.mucc)
+
+<a name="commands.checkout"></a>
+### commands.checkout(url, dir, [options], [callback])
+Checks out a repository to a working copy
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | Repository URL |
+| dir | <code>string</code> | Working copy dir |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.add"></a>
+### commands.add(files, [options], [callback])
+Adds a file / folder to a working copy
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| files | <code>Array</code> &#124; <code>string</code> | Add given files / folders |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.cat"></a>
+### commands.cat(targets, [options], [callback])
+Gets the content of a file from either a working copy or a URL.
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Array of URLs or working copy files to catalogue |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.cleanup"></a>
+### commands.cleanup(wc, [options], [callback])
+Performs an svn cleanup operation on the working copy
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wc | <code>string</code> | Working copy directory to clean |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.commit"></a>
+### commands.commit(files, [options], [callback])
+Commits a working copy to a repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| files | <code>Array</code> &#124; <code>string</code> | Array of files / folders to commit |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.copy"></a>
+### commands.copy(srcs, dst, [options], [callback])
+Copies a file / folder within either a working copy or a URL
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| srcs | <code>Array</code> &#124; <code>string</code> | URLs / files to copy |
+| dst | <code>string</code> | destination |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.del"></a>
+### commands.del(srcs, [options], [callback])
+Deletes a file/folder from either a working copy or a URL
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| srcs | <code>Array</code> &#124; <code>string</code> | Array of URLs / files to delete |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.export"></a>
+### commands.export(src, dst, [options], [callback])
+Exports a file from the repository to a local file
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| src | <code>string</code> | Source URL |
+| dst | <code>string</code> | Destination file |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.import"></a>
+### commands.import(src, dst, [options], [callback])
+Imports a file to the repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| src | <code>string</code> | Source file |
+| dst | <code>string</code> | Destination URL |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.info"></a>
+### commands.info(targets, [options], [callback])
+Performs an svn info command on a given working copy file / URL
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Target URLs / files to info |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.list"></a>
+### commands.list(targets, [options], [callback])
+Lists the files within a directory, either working copy or URL
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Target URLs / files to list |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.lock"></a>
+### commands.lock(targets, [options], [callback])
+Locks a file in a working copy / repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Target URLs / files to lock |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.log"></a>
+### commands.log(targets, [options], [callback])
+Gets the SVN message log and returns as a JSON object
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Target URLs / files to get logs for |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.mkdir"></a>
+### commands.mkdir(targets, [options], [callback])
+Creates a directory in the working copy or repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Target URLs / folders to create |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.move"></a>
+### commands.move(srcs, dst, [options], [callback])
+Moves a file / folder in a working copy or URL
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| srcs | <code>Array</code> &#124; <code>string</code> | Target URLs / files to move |
+| dst | <code>string</code> | Destination URL / file |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.propdel"></a>
+### commands.propdel(propName, target, [options], [callback])
+Deletes an svn property from a working copy / repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| propName | <code>string</code> | Property name |
+| target | <code>string</code> | Target file / folder or URL |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.propget"></a>
+### commands.propget(propName, targets, [options], [callback])
+Gets an svn property from a working copy / repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| propName | <code>string</code> | Property name |
+| targets | <code>Array</code> &#124; <code>string</code> | Target file / folder or URL |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.proplist"></a>
+### commands.proplist(targets, [options], [callback])
+Lists svn properties from a working copy / repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Target file / folder or URL |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.propset"></a>
+### commands.propset(propName, propVal, wc, [options], [callback])
+Sets an svn property from a working copy / repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| propName | <code>string</code> | Property name |
+| propVal | <code>string</code> | Property value |
+| wc | <code>string</code> | Target file / folder or URL |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.relocate"></a>
+### commands.relocate(url, wc, [options], [callback])
+Relocates an svn working copy
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | Relocation URL |
+| wc | <code>string</code> | Working copy to relocate |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.revert"></a>
+### commands.revert(wc, [options], [callback])
+Reverts files / folders in a working copy to their uncommited state
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wc | <code>string</code> | Working copy target |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.status"></a>
+### commands.status(wc, [options], [callback])
+Performs an svn status command on a working copy
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wc | <code>string</code> | Working copy target |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.switch"></a>
+### commands.switch(url, wc, [options], [callback])
+Switches to a given branch / tag for a working copy
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | Switch URL |
+| wc | <code>string</code> | Working copy target |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.unlock"></a>
+### commands.unlock(targets, [options], [callback])
+Unlocks a previously locked svn file from a working copy / repository
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Working copy / URL targets |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.update"></a>
+### commands.update(wcs, [options], [callback])
+Updates an svn working copy
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wcs | <code>Array</code> &#124; <code>string</code> | Working copy targets |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.upgrade"></a>
+### commands.upgrade(wcs, [options], [callback])
+Upgrades a given svn working copy (requires v1.7 of svn client)
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wcs | <code>Array</code> &#124; <code>string</code> | Working copy targets |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.mucc"></a>
+### commands.mucc(commandArray, commitMessage, [options], [callback])
+Executes svnmucc command, for multiple commands
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+**See**: http://svnbook.red-bean.com/en/1.8/svn.ref.svnmucc.re.html  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| commandArray | <code>Array</code> | Array of command strings, see above link for options |
+| commitMessage | <code>string</code> | Commit message to use |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="util"></a>
+## util : <code>object</code>
+Exposes some custom utility methods
+
+**Kind**: global namespace  
+
+* [util](#util) : <code>object</code>
+  * [.getRevision(target, [options], [callback])](#util.getRevision)
+  * [.getWorkingCopyRevision(wcDir, [options], [callback])](#util.getWorkingCopyRevision)
+  * [.parseUrl(url)](#util.parseUrl) ? <code>object</code>
+  * [.getTags(url, [options], [callback])](#util.getTags)
+  * [.getLatestTag(url, options, [callback])](#util.getLatestTag)
+
+<a name="util.getRevision"></a>
+### util.getRevision(target, [options], [callback])
+Gets head revision of a given URL
+
+**Kind**: static method of <code>[util](#util)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| target | <code>string</code> | Target URL |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="util.getWorkingCopyRevision"></a>
+### util.getWorkingCopyRevision(wcDir, [options], [callback])
+Gets the revision of a working copy.
+
+**Kind**: static method of <code>[util](#util)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wcDir | <code>string</code> | Working copy folder |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="util.parseUrl"></a>
+### util.parseUrl(url) ? <code>object</code>
+Parse a url for an SVN project repository and breaks it apart
+
+**Kind**: static method of <code>[util](#util)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | URL to parse |
+
+<a name="util.getTags"></a>
+### util.getTags(url, [options], [callback])
+Gets all available tags for the given svn URL
+
+**Kind**: static method of <code>[util](#util)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | Project URL to get tags for |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="util.getLatestTag"></a>
+### util.getLatestTag(url, options, [callback])
+Uses node's semver package to work out the latest tag value
+
+**Kind**: static method of <code>[util](#util)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | Project URL to get latest tag for |
+| options | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+
+

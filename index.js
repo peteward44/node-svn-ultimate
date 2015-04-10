@@ -160,10 +160,10 @@ exports.commands = {};
 /** Checks out a repository to a working copy
  * @function checkout
  * @memberof commands
- * @param url {string} Repository URL
- * @param dir {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} url - Repository URL
+ * @param {string} dir - Working copy dir
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias co
  */
 var checkout = function( url, dir, options, callback ) {
@@ -184,9 +184,9 @@ exports.commands.co = checkout;
 /** Adds a file / folder to a working copy
  * @function add
  * @memberof commands
- * @param files {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} files - Add given files / folders
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var add = function( files, options, callback ) {
 	if ( !Array.isArray( files ) ) {
@@ -207,9 +207,9 @@ exports.commands.add = add;
 /** Gets the content of a file from either a working copy or a URL.
  * @function cat
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Array of URLs or working copy files to catalogue
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var cat = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -230,9 +230,9 @@ exports.commands.cat = cat;
 /** Performs an svn cleanup operation on the working copy
  * @function cleanup
  * @memberof commands
- * @param wc {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} wc - Working copy directory to clean
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var cleanup = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
@@ -247,9 +247,9 @@ exports.commands.cleanup = cleanup;
 /** Commits a working copy to a repository
  * @function commit
  * @memberof commands
- * @param files {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} files - Array of files / folders to commit
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias ci
  */
 var commit = function( files, options, callback ) {
@@ -272,10 +272,10 @@ exports.commands.ci = commit;
 /** Copies a file / folder within either a working copy or a URL
  * @function copy
  * @memberof commands
- * @param srcs {Array|string}
- * @param dst {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} srcs - URLs / files to copy
+ * @param {string} dst - destination
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias cp
  */
 var copy = function( srcs, dst, options, callback ) {
@@ -298,9 +298,9 @@ exports.commands.cp = copy;
 /** Deletes a file/folder from either a working copy or a URL
  * @function del
  * @memberof commands
- * @param srcs {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} srcs - Array of URLs / files to delete
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias remove
  * @alias rm
  */
@@ -337,10 +337,10 @@ exports.commands.rm = del;
 /** Exports a file from the repository to a local file
  * @function export
  * @memberof commands
- * @param src {string}
- * @param dst {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} src - Source URL
+ * @param {string} dst - Destination file
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias exp
  */
 var exp = function( src, dst, options, callback ) {
@@ -358,10 +358,10 @@ exports.commands.exp = exp;
 /** Imports a file to the repository
  * @function import
  * @memberof commands
- * @param src {string}
- * @param dst {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} src - Source file
+ * @param {string} dst - Destination URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias imp
  */
 var imp = function( src, dst, options, callback ) {
@@ -381,9 +381,9 @@ exports.commands.imp = imp;
 /** Performs an svn info command on a given working copy file / URL
  * @function info
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Target URLs / files to info
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var info = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -402,9 +402,9 @@ exports.commands.info = info;
 /** Lists the files within a directory, either working copy or URL
  * @function list
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Target URLs / files to list
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias ls
  */
 var list = function( targets, options, callback ) {
@@ -425,9 +425,9 @@ exports.commands.ls = list;
 /** Locks a file in a working copy / repository
  * @function lock
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Target URLs / files to lock
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var lock = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -448,9 +448,9 @@ exports.commands.lock = lock;
 /** Gets the SVN message log and returns as a JSON object
  * @function log
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Target URLs / files to get logs for
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var log = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -472,9 +472,9 @@ exports.commands.log = log;
 /** Creates a directory in the working copy or repository
  * @function mkdir
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Target URLs / folders to create
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var mkdir = function( targets, options, callback ) {
 	if ( !Array.isArray( targets ) ) {
@@ -495,10 +495,10 @@ exports.commands.mkdir = mkdir;
 /** Moves a file / folder in a working copy or URL
  * @function move
  * @memberof commands
- * @param srcs {Array|string}
- * @param dst {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} srcs - Target URLs / files to move
+ * @param {string} dst - Destination URL / file
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias mv
  * @alias rename
  * @alias ren
@@ -535,10 +535,10 @@ exports.commands.ren = move;
 /** Deletes an svn property from a working copy / repository
  * @function propdel
  * @memberof commands
- * @param propName {string}
- * @param target {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} propName - Property name
+ * @param {string} target - Target file / folder or URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias pdel
  * @alias pd
  */
@@ -560,10 +560,10 @@ exports.commands.pd = propdel;
 /** Gets an svn property from a working copy / repository
  * @function propget
  * @memberof commands
- * @param propName {string}
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} propName - Property name
+ * @param {Array|string} targets - Target file / folder or URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias pget
  * @alias pg
  */
@@ -586,9 +586,9 @@ exports.commands.pg = propget;
 /** Lists svn properties from a working copy / repository
  * @function proplist
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Target file / folder or URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias plist
  * @alias pl
  */
@@ -611,11 +611,11 @@ exports.commands.pl = proplist;
 /** Sets an svn property from a working copy / repository
  * @function propset
  * @memberof commands
- * @param propName {string}
- * @param propVal {string}
- * @param wc {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} propName - Property name
+ * @param {string} propVal - Property value
+ * @param {string} wc - Target file / folder or URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias pset
  * @alias ps
  */
@@ -635,10 +635,10 @@ exports.commands.ps = propset;
 /** Relocates an svn working copy
  * @function relocate
  * @memberof commands
- * @param url {string}
- * @param wc {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} url - Relocation URL
+ * @param {string} wc - Working copy to relocate
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var relocate = function( url, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
@@ -655,9 +655,9 @@ exports.commands.relocate = relocate;
 /** Reverts files / folders in a working copy to their uncommited state
  * @function revert
  * @memberof commands
- * @param wc {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} wc - Working copy target
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var revert = function( wc, options, callback ) {
 	if ( typeof options === 'function' ) {
@@ -673,9 +673,9 @@ exports.commands.revert = revert;
 /** Performs an svn status command on a working copy
  * @function status
  * @memberof commands
- * @param wc {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} wc - Working copy target
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias stat
  * @alias st
  */
@@ -695,10 +695,10 @@ exports.commands.st = status;
 /** Switches to a given branch / tag for a working copy
  * @function switch
  * @memberof commands
- * @param url {string}
- * @param wc {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} url - Switch URL
+ * @param {string} wc - Working copy target
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var switchf = function( url, wc, options, callback ) {
 	if ( typeof options === 'function' ) {
@@ -714,9 +714,9 @@ exports.commands.switch = switchf;
 /** Unlocks a previously locked svn file from a working copy / repository
  * @function unlock
  * @memberof commands
- * @param targets {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} targets - Working copy / URL targets
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var unlock = function( targets, options, callback ) {
 	if ( typeof options === 'function' ) {
@@ -735,9 +735,9 @@ exports.commands.unlock = unlock;
 /** Updates an svn working copy
  * @function update
  * @memberof commands
- * @param wcs {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} wcs - Working copy targets
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  * @alias up
  */
 var update = function( wcs, options, callback ) {
@@ -758,9 +758,9 @@ exports.commands.up = update;
 /** Upgrades a given svn working copy (requires v1.7 of svn client)
  * @function upgrade
  * @memberof commands
- * @param wcs {Array|string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array|string} wcs - Working copy targets
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var upgrade = function( wcs, options, callback ) {
 	// upgrade only works for versions of svn >= 1.7
@@ -806,10 +806,10 @@ exports.commands.upgrade = upgrade;
  * @see http://svnbook.red-bean.com/en/1.8/svn.ref.svnmucc.re.html
  * @function mucc
  * @memberof commands
- * @param commandArray {Array}
- * @param commitMessage {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {Array} commandArray - Array of command strings, see above link for options
+ * @param {string} commitMessage - Commit message to use
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var mucc = function( commandArray, commitMessage, options, callback ) {
 	if ( typeof commitMessage !== 'string' ) {
@@ -839,9 +839,9 @@ exports.util = {};
 /** Gets head revision of a given URL
  * @function getRevision
  * @memberof util
- * @param target {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} target - Target URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var getRevision = function( target, options, callback ) {
 	if ( typeof options === "function" ) {
@@ -882,9 +882,9 @@ exports.util.getRevision = getRevision;
 /** Gets the revision of a working copy.
  * @function getWorkingCopyRevision
  * @memberof util
- * @param wcDir {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} wcDir - Working copy folder
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var getWorkingCopyRevision = function( wcDir, options, callback ) {
 	if ( typeof options === "function" ) {
@@ -930,7 +930,7 @@ exports.util.getWorkingCopyRevision = getWorkingCopyRevision;
 /** Parse a url for an SVN project repository and breaks it apart
  * @function parseUrl
  * @memberof util
- * @param url {string}
+ * @param {string} url - URL to parse
  * @returns {object}
  */
 var parseUrl = function( url ) {
@@ -955,9 +955,9 @@ exports.util.parseUrl = parseUrl;
 /** Gets all available tags for the given svn URL
  * @function getTags
  * @memberof util
- * @param url {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} url - Project URL to get tags for
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
  */
 var getTags = function( url, options, callback ) {
 	if ( typeof options === "function" ) {
@@ -982,9 +982,9 @@ exports.util.getTags = getTags;
 /** Uses node's semver package to work out the latest tag value
  * @function getLatestTag
  * @memberof util
- * @param url {string}
- * @param options {object=}
- * @param callback {function=}
+ * @param {string} url - Project URL to get latest tag for
+ * @param {object} options - Options object
+ * @param {function} [callback] - Complete callback
  */
 var getLatestTag = function( url, options, callback ) {
 	if ( typeof options === "function" ) {
