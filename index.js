@@ -60,7 +60,7 @@ var execute = function( cmd, options, callback ) {
 
 var executeSvn = function( params, options, callback ) {
 	options = options || {};
-	var cmd = ( options.svn || 'svn' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
+	var cmd = ( options.svn || 'svn' ) + ' ' + params.join( " " );
 	execute( cmd, options, callback );
 };
 
@@ -80,14 +80,14 @@ var executeSvnXml = function( params, options, callback ) {
 
 var executeMucc = function( params, options, callback ) {
 	options = options || {};
-	var cmd = ( options.svnmucc || 'svnmucc' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
+	var cmd = ( options.svnmucc || 'svnmucc' ) + ' ' + params.join( " " );
 	execute( cmd, options, callback );
 };
 
 
 var execSvnVersion = function( params, options, callback ) {
 	options = options || {};
-	var cmd = ( options.svnversion || 'svnversion' ) + ' ' + ( Array.isArray( options.params ) ? params.concat( options.params ).join( " " ) : params.join( " " ) );
+	var cmd = ( options.svnversion || 'svnversion' ) + ' ' + params.join( " " );
 	options.noStandardOptions = true;
 	execute( cmd, options, callback );
 };
