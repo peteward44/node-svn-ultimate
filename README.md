@@ -527,5 +527,18 @@ Uses node's semver package to work out the latest tag value
 | options | <code>object</code> | Options object |
 | [callback] | <code>function</code> | Complete callback |
 
+<a name="util.getBranches"></a>
+### util.getBranches(url, [options], [callback])
+Gets all available branches for the given svn URL
+
+**Kind**: static method of <code>[util](#util)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | Project URL to get branches for |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+
 
 

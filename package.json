@@ -1,7 +1,7 @@
 {
   "name": "node-svn-ultimate",
   "description": "The ultimate SVN wrapper for node. Contains all the basic methods checkout, update, info, etc, and includes svnmucc support.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/peteward44/node-svn-ultimate",
   "repository": {
     "type": "git",

@@ -1010,3 +1010,29 @@ var getLatestTag = function( url, options, callback ) {
 };
 exports.util.getLatestTag = getLatestTag;
 
+/** Gets all available branches for the given svn URL
+ * @function getBranches
+ * @memberof util
+ * @param {string} url - Project URL to get branches for
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
+ */
+var getBranches = function( url, options, callback ) {
+	if ( typeof options === "function" ) {
+		callback = options;
+		options = null;
+	}
+	options = options || {};
+	var branchesUrl = parseUrl( url ).branchesUrl;
+	list( branchesUrl, options, function( err, data ) {
+		var result = [];
+		if ( !err && data && data.list && Array.isArray( data.list.entry ) ) {
+			result = data.list.entry.filter( function( entry ) {
+					return entry && entry.$ && entry.$.kind === "dir";
+				} );
+		}
+		callback( err, result );
+	} );
+};
+exports.util.getBranches = getBranches;
+
