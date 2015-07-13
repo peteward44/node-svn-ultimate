@@ -1,4 +1,7 @@
 language: node_js
 node_js:
   - "node"
-  - "iojs"
+install:
+  - npm install jshint -g
+script:
+  - jshint index.js
