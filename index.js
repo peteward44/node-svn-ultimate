@@ -968,10 +968,16 @@ var getTags = function( url, options, callback ) {
 	var tagsUrl = parseUrl( url ).tagsUrl;
 	list( tagsUrl, options, function( err, data ) {
 		var result = [];
-		if ( !err && data && data.list && Array.isArray( data.list.entry ) ) {
-			result = data.list.entry.filter( function( entry ) {
-					return entry && entry.$ && entry.$.kind === "dir";
-				} );
+		if ( !err && data && data.list && data.list.entry ) {
+			if ( Array.isArray( data.list.entry ) ) {
+				result = data.list.entry.filter( function( entry ) {
+						return entry && entry.$ && entry.$.kind === "dir";
+					} );
+			} else {
+				if ( data.list.entry.$ && data.list.entry.$.kind === "dir" ) {
+					result = [ data.list.entry ];
+				}
+			}
 		}
 		callback( err, result );
 	} );
@@ -1026,10 +1032,16 @@ var getBranches = function( url, options, callback ) {
 	var branchesUrl = parseUrl( url ).branchesUrl;
 	list( branchesUrl, options, function( err, data ) {
 		var result = [];
-		if ( !err && data && data.list && Array.isArray( data.list.entry ) ) {
-			result = data.list.entry.filter( function( entry ) {
-					return entry && entry.$ && entry.$.kind === "dir";
-				} );
+		if ( !err && data && data.list && data.list.entry ) {
+			if ( Array.isArray( data.list.entry ) ) {
+				result = data.list.entry.filter( function( entry ) {
+						return entry && entry.$ && entry.$.kind === "dir";
+					} );
+			} else {
+				if ( data.list.entry.$ && data.list.entry.$.kind === "dir" ) {
+					result = [ data.list.entry ];
+				}
+			}
 		}
 		callback( err, result );
 	} );
