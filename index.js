@@ -1072,7 +1072,13 @@ MuccHelper.prototype._getTempFilename = function() {
 };
 
 
+MuccHelper.prototype.queueLength = function() {
+	return this._commands.length;
+}
+
+
 MuccHelper.prototype._reset = function( callback ) {
+	this._commands.length = 0;
 	if ( fs.existsSync( this._options.tempFolder ) ) {
 		fs.remove( this._options.tempFolder, function() { callback(); } );
 	} else {
