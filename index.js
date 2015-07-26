@@ -4,6 +4,8 @@
 var exec = require( 'child_process' ).exec;
 var fs = require( 'fs-extra' );
 var os = require( 'os' );
+var path = require( 'path' );
+var uuid = require( 'node-uuid' );
 var xml2js = require( 'xml2js' );
 var semver = require( 'semver' );
 
@@ -1047,4 +1049,104 @@ var getBranches = function( url, options, callback ) {
 	} );
 };
 exports.util.getBranches = getBranches;
+
+
+/** Helper object for using SVNMUCC
+ */
+var MuccHelper = function( options ) {
+	this._options = options || {};
+	this._commands = [];
+	this._options.tempFolder = this._options.tempFolder || path.join( os.tmpdir(), 'mucc_' + uuid.v4() );
+};
+
+
+MuccHelper.prototype._getTempFilename = function() {
+	fs.ensureDirSync( this._options.tempFolder );
+	for ( var count=0; true; ++count ) {
+		var newPath = path.join( this._options.tempFolder, uuid.v4() + ".temp" );
+		if ( !fs.existsSync( newPath ) ) {
+			return newPath;
+		}
+	}
+	throw new Error( "Could not find temporary filename" ); // never reached
+};
+
+
+MuccHelper.prototype._reset = function( callback ) {
+	if ( fs.existsSync( this._options.tempFolder ) ) {
+		fs.remove( this._options.tempFolder, function() { callback(); } );
+	} else {
+		callback();
+	}
+};
+
+
+MuccHelper.prototype.cp = function( src, dst, options ) {
+	options = options || {};
+	var str = 'cp';
+	if ( isFinite( options.revision ) ) {
+		str += '\n' + options.revision;
+	} else {
+		str += '\nHEAD';
+	}
+	str += '\n' + src;
+	str += '\n' + dst;
+	this._commands.push( str );
+};
+
+
+MuccHelper.prototype.putFile = function( filename, dst ) {
+	this._commands.push( 'put\n' + filename + '\n' + dst );
+};
+
+
+MuccHelper.prototype.put = function( filedata, dst ) {
+	var file = this._getTempFilename();
+	fs.writeFileSync( file, filedata );
+	this._commands.push( 'put\n' + file + '\n' + dst );
+};
+
+
+MuccHelper.prototype.mkdir = function( dst ) {
+	this._commands.push( 'mkdir\n' + dst );
+};
+
+
+MuccHelper.prototype.rm = function( dst ) {
+	this._commands.push( 'rm\n' + dst );
+};
+
+
+MuccHelper.prototype.commit = function( options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+		options = {};
+	}
+	var that = this;
+	options = options || {};
+	if ( this._commands.length > 0 ) {
+		// write arguments to file and pass to mucc via a temporary file to get around
+		// windows command line limitations
+		var argsFile = this._getTempFilename();
+		fs.writeFileSync( argsFile, this._commands.join( "\n" ) );
+		var params = '';
+		if ( options.rootUrl && options.rootUrl.length > 0 ) {
+			params = '--root-url "' + options.rootUrl + '"';
+		}
+		mucc(
+			params + ' --extra-args "' + argsFile + '"',
+			options.msg || 'SVNMUCC commit',
+			function( err ) {
+				that._reset( function( err2 ) {
+					callback( err || err2 );
+				} );
+			} );
+	} else {
+		callback();
+	}
+};
+
+
+
+exports.util.MuccHelper = MuccHelper;
 

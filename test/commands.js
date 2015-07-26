@@ -375,5 +375,26 @@ describe('node-svn-ultimate', function() {
 			// } );
 		// });
 	} );
+	
+	
+	describe( 'SVNMucc helper', function() {
+		it( 'put', function( done ) {
+			var h = new svn.util.MuccHelper();
+			h.put( 'contents of new file', testServer + '/newfile.txt' );
+			h.commit( function( err ) {
+				should.not.exist(err);
+				done();
+			} );
+		} );
+		
+		it( 'cp', function( done ) {
+			var h = new svn.util.MuccHelper();
+			h.cp( testServer + '/newfile.txt', testServer + '/newfile2.txt' );
+			h.commit( function( err ) {
+				should.not.exist(err);
+				done();
+			} );
+		} );
+	} );
 });
 
