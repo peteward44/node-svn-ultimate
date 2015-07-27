@@ -1074,7 +1074,7 @@ MuccHelper.prototype._getTempFilename = function() {
 
 MuccHelper.prototype.queueLength = function() {
 	return this._commands.length;
-}
+};
 
 
 MuccHelper.prototype._reset = function( callback ) {
