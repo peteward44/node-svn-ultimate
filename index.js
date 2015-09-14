@@ -825,7 +825,24 @@ var mucc = function( commandArray, commitMessage, options, callback ) {
 	if ( !Array.isArray( commandArray ) ) {
 		commandArray = [commandArray];
 	}
-	executeMucc( [ '-m "' + commitMessage + '"' ].concat( commandArray ), options, callback );
+	executeMucc( [ '-m "' + commitMessage + '"' ].concat( commandArray ), options, function( err, stdo ) {
+		// parse the output to find the revision that has just been commited
+		var result = null;
+		stdo = stdo.toString().trim();
+		try {
+			var matches = stdo.match( /^r(\d+) committed by (.+?) at (.+)$/ );
+			if ( matches ) { // matches should be revision, name, then iso date
+				result = {
+					revision: parseInt( matches[1], 10 ),
+					user: matches[2],
+					isodate: matches[3]
+				};
+			}
+		}
+		catch ( err2 ) {
+		}
+		callback( err, result );
+	} );
 };
 exports.commands.mucc = mucc;
 
@@ -1142,13 +1159,13 @@ MuccHelper.prototype.commit = function( options, callback ) {
 		mucc(
 			params + ' --extra-args "' + argsFile + '"',
 			options.msg || 'SVNMUCC commit',
-			function( err ) {
+			function( err, result ) {
 				that._reset( function( err2 ) {
-					callback( err || err2 );
+					callback( err || err2, result );
 				} );
 			} );
 	} else {
-		callback();
+		callback( null, null );
 	}
 };
 
