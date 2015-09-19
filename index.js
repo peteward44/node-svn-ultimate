@@ -931,7 +931,7 @@ var getWorkingCopyRevision = function( wcDir, options, callback ) {
 					result.high = result.low;
 				}
 				result.flags = match[3];
-				if ( result.flags > 0 ) {
+				if ( result.flags.length > 0 ) {
 					result.modified = result.flags.indexOf( 'M' ) >= 0;
 					result.partial = result.flags.indexOf( 'P' ) >= 0;
 					result.switched = result.flags.indexOf( 'S' ) >= 0;
