@@ -668,7 +668,10 @@ var revert = function( wc, options, callback ) {
 	}
 	options = options || {};
 	addExtraOptions( [ 'quiet', 'depth' ], options );
-	executeSvn( [ 'revert', wc ], options, callback );
+	if ( !Array.isArray( wc ) ) {
+		wc = [wc];
+	}
+	executeSvn( [ 'revert' ].concat( wc ), options, callback );
 };
 exports.commands.revert = revert;
 
