@@ -13,7 +13,7 @@ var spawn = require('child_process').spawn;
 exports.create = function( tempdir, callback ) {
 	var dirname = 'temp_' + Math.floor( Math.random() * 999999 );
 	if ( fs.existsSync( tempdir ) ) {
-		fs.deleteSync( tempdir );
+		fs.removeSync( tempdir );
 	}
 	fs.ensureDirSync( tempdir );
 	var proc = spawn( 'svnadmin', [ 'create', dirname ], { cwd: tempdir } );

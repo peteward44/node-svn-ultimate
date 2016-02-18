@@ -28,7 +28,7 @@ describe('node-svn-ultimate', function() {
 	} );
 	
 	after( function() {
-		fs.deleteSync( tempTestDir );
+		fs.removeSync( tempTestDir );
 	} );
 	
 	
