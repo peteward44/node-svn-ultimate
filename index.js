@@ -5,7 +5,7 @@ var exec = require( 'child_process' ).exec;
 var fs = require( 'fs-extra' );
 var os = require( 'os' );
 var path = require( 'path' );
-var uuid = require( 'node-uuid' );
+var uuid = require( 'uuid' );
 var xml2js = require( 'xml2js' );
 var semver = require( 'semver' );
 

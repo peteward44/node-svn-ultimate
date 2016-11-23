@@ -13,14 +13,14 @@
     "svn"
   ],
   "ignore": [
-	"test",
-	".travis.yml",
-	".gitignore"
+    "test",
+    ".travis.yml",
+    ".gitignore"
   ],
   "dependencies": {
     "fs-extra": "^0.26.5",
-    "node-uuid": "^1.4.3",
     "semver": "^4.3.1",
+    "uuid": "^3.0.0",
     "xml2js": "^0.4.5"
   },
   "devDependencies": {
