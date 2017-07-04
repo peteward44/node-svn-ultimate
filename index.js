@@ -468,7 +468,29 @@ var log = function( targets, options, callback ) {
 };
 exports.commands.log = log;
 
-// TODO: merge
+
+/** Apply the differences between two sources to a working copy path.
+ * @function merge
+ * @memberof commands
+ * @param {Array|string} targets - Target URLs
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
+ */
+var merge = function( targets, options, callback ) {
+  if ( !Array.isArray( targets ) ) {
+    targets = [targets];
+  }
+  if ( typeof options === 'function' ) {
+    callback = options;
+    options = null;
+  }
+  options = options || {};
+  addExtraOptions( [ 'force', 'quiet', 'revision', 'depth' ], options );
+  executeSvn( [ 'merge' ].concat( targets ), options, callback );
+};
+exports.commands.merge = merge;
+
+
 // TODO: mergeinfo
 
 /** Creates a directory in the working copy or repository
