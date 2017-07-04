@@ -104,6 +104,7 @@ Exposes the commands for the command line svn tool.
   * [.list(targets, [options], [callback])](#commands.list)
   * [.lock(targets, [options], [callback])](#commands.lock)
   * [.log(targets, [options], [callback])](#commands.log)
+  * [.merge(targets, [options], [callback])](#commands.merge)
   * [.mkdir(targets, [options], [callback])](#commands.mkdir)
   * [.move(srcs, dst, [options], [callback])](#commands.move)
   * [.propdel(propName, target, [options], [callback])](#commands.propdel)
@@ -276,6 +277,18 @@ Gets the SVN message log and returns as a JSON object
 | Param | Type | Description |
 | --- | --- | --- |
 | targets | <code>Array</code> &#124; <code>string</code> | Target URLs / files to get logs for |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.merge"></a>
+### commands.merge(targets, [options], [callback])
+Apply the differences between two sources to a working copy path
+
+**Kind**: static method of <code>[commands](#commands)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| targets | <code>Array</code> &#124; <code>string</code> | Target URLs |
 | [options] | <code>object</code> | Options object |
 | [callback] | <code>function</code> | Complete callback |
 
