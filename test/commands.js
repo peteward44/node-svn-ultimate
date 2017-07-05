@@ -142,6 +142,29 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 
+    it('merge', function(done) {
+      svn.commands.info( testServer, function( err, data ) {
+        var oldRev = data.entry.$.revision;
+        var fp = path.join( checkoutTestDir, "test2.txt" );
+        var oldContent = fs.readFileSync(fp);
+        fs.writeFileSync( fp, "aabb" );
+				svn.commands.commit( checkoutTestDir, { msg: 'test commit' }, function( err ) {
+					svn.commands.info( testServer, function( err, data ) {
+						var newRev = data.entry.$.revision;
+						var mergeOption = newRev + ':' + oldRev
+						svn.commands.merge( fp, { revision: mergeOption }, function( err ) {
+							should.not.exist(err);
+							svn.commands.commit( checkoutTestDir, { msg: 'test commit 2' }, function( err ) {
+                var newContent = fs.readFileSync(fp);
+                should.ok( newContent.toString('utf8') === oldContent.toString('utf8') );
+                done();
+							} );
+						} );
+					} );
+				} );
+      } );
+    });
+
 		it('list', function(done) {
 			svn.commands.list( testServer, function( err, data ) {
 				should.not.exist(err);
