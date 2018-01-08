@@ -175,8 +175,12 @@ var checkout = function( url, dir, options, callback ) {
 	}
 	options = options || {};
 	addExtraOptions( [ 'force', 'quiet', 'revision', 'depth', 'ignoreExternals' ], options );
-	if ( !fs.existsSync( dir ) ) {
-		fs.mkdirsSync( dir );
+	
+	let dirPath = dir;
+	if(typeof options.cwd !== 'undefined)
+	   dirPath = path.join(options.cwd, dir);
+	if ( !fs.existsSync( dirPath ) ) {
+		fs.mkdirsSync( dirPath );
 	}
 	executeSvn( [ 'checkout', url, dir ], options, callback );
 };
