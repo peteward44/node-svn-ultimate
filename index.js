@@ -178,7 +178,7 @@ var checkout = function( url, dir, options, callback ) {
 	
 	let dirPath = dir;
 	if(typeof options.cwd !== 'undefined)
-	   dirPath = path.join(options.cwd, dir);
+	   dirPath = path.resolve(options.cwd, dir);
 	if ( !fs.existsSync( dirPath ) ) {
 		fs.mkdirsSync( dirPath );
 	}
