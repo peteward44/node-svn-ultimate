@@ -177,7 +177,7 @@ var checkout = function( url, dir, options, callback ) {
 	addExtraOptions( [ 'force', 'quiet', 'revision', 'depth', 'ignoreExternals' ], options );
 	
 	let dirPath = dir;
-	if(typeof options.cwd !== 'undefined)
+	if(typeof options.cwd !== 'undefined')
 	   dirPath = path.resolve(options.cwd, dir);
 	if ( !fs.existsSync( dirPath ) ) {
 		fs.mkdirsSync( dirPath );
