@@ -45,6 +45,15 @@ var execute = function( cmd, options, callback ) {
 		if ( typeof options.password === 'string' ) {
 			cmd += ' --password=' + options.password;
 		}
+		if ( options['config-option'] ) {
+			if ( Array.isArray(options['config-option']) ) {
+				options['config-option'].forEach(option => {
+					cmd += ' --config-option=' + option;
+				});
+			} else {
+				cmd += ' --config-option=' + options['config-option'];
+			}
+		}
 	}
 	if ( options.params ) {
 		cmd += ' ' + options.params.join( " " );

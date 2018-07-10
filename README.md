@@ -35,12 +35,16 @@ svnUltimate.commands.update( '/home/user/checkout',
 		revision: 33050,		// provide --revision to commands that accept it
 		depth: "empty",			// provide --depth to commands that accept it
 		ignoreExternals: true,	// provide --ignore-externals to commands that accept it
-		params: [ '-m "Commit comment"' ] // extra parameters to pass
+		params: [ '-m "Commit comment"' ], // extra parameters to pass
+		'config-option': [
+			'servers:global:http-proxy-host=proxy.someProxy.com',
+			'servers:global:http-proxy-port=8080',
+		] // provide --config-option to commands that accept it.  Use an array for multiple config options
 	},
 	function( err ) {
 		console.log( "Update complete" );
 	} );
-	
+
 ```
 
 Utility methods
