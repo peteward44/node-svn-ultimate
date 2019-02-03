@@ -14,9 +14,9 @@ Utility methods are provided through a util object.
 npm install node-svn-ultimate --save
 ```
 
-Example usage
+### Example usage
 
-```
+```js
 var svnUltimate = require('node-svn-ultimate');
 
 svnUltimate.commands.checkout( 'https://my.url/svn/repo', '/home/user/checkout', function( err ) {
@@ -47,9 +47,9 @@ svnUltimate.commands.update( '/home/user/checkout',
 
 ```
 
-Utility methods
+### Utility methods
 
-```
+```js
 // Gets the working copy revision or the HEAD revision if the target is a URL
 svnUltimate.util.getRevision( 'https://my.url/svn/repo', function( err, revision ) {
 	console.log( "Head revision=" + revision );
@@ -77,9 +77,8 @@ svnUltimate.util.getLatestTag( 'https://my.url/svn/repo/trunk', function( err, l
 
 ```
 
-
-
 ## Methods
+
 <dl>
 <dt><a href="#commands">commands</a> : <code>object</code></dt>
 <dd><p>Exposes the commands for the command line svn tool.</p>
@@ -89,7 +88,9 @@ svnUltimate.util.getLatestTag( 'https://my.url/svn/repo/trunk', function( err, l
 </dd>
 </dl>
 <a name="commands"></a>
+
 ## commands : <code>object</code>
+
 Exposes the commands for the command line svn tool.
 
 **Kind**: global namespace  
