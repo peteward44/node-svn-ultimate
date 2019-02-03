@@ -1,7 +1,11 @@
 language: node_js
 node_js:
   - "node"
+  - "0.10.0"
 install:
   - npm install jshint -g
+  - npm install
 script:
   - jshint index.js
+  - npm test
+
