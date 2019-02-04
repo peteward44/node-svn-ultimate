@@ -151,7 +151,7 @@ describe('node-svn-ultimate', function() {
 				svn.commands.commit( checkoutTestDir, { msg: 'test commit' }, function( err ) {
 					svn.commands.info( testServer, function( err, data ) {
 						var newRev = data.entry.$.revision;
-						var mergeOption = newRev + ':' + oldRev
+						var mergeOption = newRev + ':' + oldRev;
 						svn.commands.merge( fp, { revision: mergeOption }, function( err ) {
 							should.not.exist(err);
 							svn.commands.commit( checkoutTestDir, { msg: 'test commit 2' }, function( err ) {
@@ -369,7 +369,7 @@ describe('node-svn-ultimate', function() {
 		it('getRevision path', function(done) {
 			svn.util.getRevision( checkoutTestDir, function( err, data ) {
 				should.not.exist(err);
-				data.should.be.a.Number;
+				data.should.be.a.Number();
 				done();
 			} );
 		});
@@ -377,7 +377,7 @@ describe('node-svn-ultimate', function() {
 		it('getRevision url', function(done) {
 			svn.util.getRevision( testServer, function( err, data ) {
 				should.not.exist(err);
-				data.should.be.a.Number;
+				data.should.be.a.Number();
 				done();
 			} );
 		});
