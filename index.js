@@ -47,7 +47,7 @@ var execute = function( cmd, options, callback ) {
 		}
 		if ( options['config-option'] ) {
 			if ( Array.isArray(options['config-option']) ) {
-				options['config-option'].forEach(option => {
+				options['config-option'].forEach( function( option ) {
 					cmd += ' --config-option=' + option;
 				});
 			} else {
@@ -185,7 +185,7 @@ var checkout = function( url, dir, options, callback ) {
 	options = options || {};
 	addExtraOptions( [ 'force', 'quiet', 'revision', 'depth', 'ignoreExternals' ], options );
 	
-	let dirPath = dir;
+	var dirPath = dir;
 	if(typeof options.cwd !== 'undefined')
 	   dirPath = path.resolve(options.cwd, dir);
 	if ( !fs.existsSync( dirPath ) ) {
