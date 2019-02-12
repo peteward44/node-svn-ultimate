@@ -110,7 +110,7 @@ describe('node-svn-ultimate', function() {
 			svn.commands.copy( testServer + "/test2.txt", testServer + "/test3.txt", "copy commit", function( err ) {
 				should.not.exist(err);
 				// make sure copied file exists
-				svn.commands.cat( testServer + "/test2.txt", function( err2, data ) {
+				svn.commands.cat( testServer + "/test3.txt", function( err2, data ) {
 					should.not.exist(err2);
 					should.ok( data.length > 0 );
 					should.ok( data === "aa" );
@@ -148,13 +148,13 @@ describe('node-svn-ultimate', function() {
         var fp = path.join( checkoutTestDir, "test2.txt" );
         var oldContent = fs.readFileSync(fp);
         fs.writeFileSync( fp, "aabb" );
-				svn.commands.commit( checkoutTestDir, { msg: 'test commit' }, function( err ) {
+				svn.commands.commit( checkoutTestDir, { msg: 'test commit (merge)' }, function( err ) {
 					svn.commands.info( testServer, function( err, data ) {
 						var newRev = data.entry.$.revision;
 						var mergeOption = newRev + ':' + oldRev;
 						svn.commands.merge( fp, { revision: mergeOption }, function( err ) {
 							should.not.exist(err);
-							svn.commands.commit( checkoutTestDir, { msg: 'test commit 2' }, function( err ) {
+							svn.commands.commit( checkoutTestDir, { msg: 'test commit 2 (merge)' }, function( err ) {
                 var newContent = fs.readFileSync(fp);
                 should.ok( newContent.toString('utf8') === oldContent.toString('utf8') );
                 done();
