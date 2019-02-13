@@ -1,5 +1,5 @@
 /*global describe:false, it:false */
-
+/*jslint node: true */
 // Creates a local SVN repositiory using svnadmin to run tests against
 'use strict';
 

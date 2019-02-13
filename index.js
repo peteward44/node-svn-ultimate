@@ -156,6 +156,11 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 						options.params.push('-m', '"' + options.msg + '"');
 					}
 					break;
+				case 'verbose':
+					if ( options.verbose ) {
+						options.params.push('--verbose');
+					}
+					break;
 			}
 		} );
 	}
@@ -476,7 +481,7 @@ var log = function( targets, options, callback ) {
 		options = null;
 	}
 	options = options || {};
-	addExtraOptions( [ 'quiet', 'depth', 'revision' ], options );
+	addExtraOptions( [ 'quiet', 'depth', 'revision', 'verbose' ], options );
 	executeSvnXml( [ 'log' ].concat( targets ), options, callback );
 };
 exports.commands.log = log;
