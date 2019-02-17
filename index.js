@@ -508,8 +508,27 @@ var merge = function( targets, options, callback ) {
 };
 exports.commands.merge = merge;
 
-
-// TODO: mergeinfo
+// WIP: mergeinfo
+/** Query information related to merges (or potential merges) between SOURCE-URL and TARGET.
+ * @function mergeinfo
+ * @memberof commands
+ * @param {string} source - SOURCE URL
+ * @param {string} target - TARGET URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
+ */
+var mergeinfo = function( source, target, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+		options = null;
+	} else if ( typeof options === 'string' ) {
+		options = { msg: options };
+	}
+	options = options || {};
+	addExtraOptions( [ 'quiet', 'msg', 'verbose', 'log' ], options );
+	executeSvn( [ 'mergeinfo' ].concat( source ).concat( target ), options, callback );
+};
+exports.commands.mergeinfo = mergeinfo;
 
 /** Creates a directory in the working copy or repository
  * @function mkdir

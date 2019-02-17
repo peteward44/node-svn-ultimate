@@ -163,7 +163,17 @@ describe('node-svn-ultimate', function() {
 					} );
 				} );
       } );
-    });
+		});
+		
+		it('mergeinfo', function(done) {
+			var src = testServer + '/test2.txt';
+			var target = testServer + '/test3.txt';
+			var opt = {showRevs: 'merged'};
+			svn.commands.mergeinfo (src, target, opt, function( err ) {
+				should.not.exist(err);
+				done();
+			} );
+		});
 
 		it('list', function(done) {
 			svn.commands.list( testServer, function( err, data ) {
