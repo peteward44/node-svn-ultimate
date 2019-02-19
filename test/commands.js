@@ -47,6 +47,8 @@ describe('node-svn-ultimate', function() {
 			} );
 		});
 
+		
+
 		it('add', function(done) {
 			var fp = path.join( checkoutTestDir, "test2.txt" );
 			fs.writeFileSync( fp, "aa" );
@@ -313,6 +315,18 @@ describe('node-svn-ultimate', function() {
 			svn.commands.mkdir( p, function( err ) {
 				should.not.exist(err);
 				should.ok( fs.existsSync( p ) && fs.statSync( p ).isDirectory() );
+				done();
+			} );
+		});
+		it('mkdir: make array dir', function(done) {
+			var paths = ["trunk", "tags", "branches"].map( function( p ) {
+				return path.join( checkoutTestDir, p );
+			});
+			svn.commands.mkdir( paths, function( err ) {
+				should.not.exist(err);
+				should.ok( fs.existsSync( paths[0] ) && fs.existsSync( paths[2] ) );
+				should.ok( fs.statSync( paths[0] ).isDirectory() );
+				should.ok( fs.statSync( paths[2] ).isDirectory() );
 				done();
 			} );
 		});
