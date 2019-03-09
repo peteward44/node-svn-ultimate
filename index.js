@@ -513,7 +513,6 @@ var merge = function( targets, options, callback ) {
 };
 exports.commands.merge = merge;
 
-// WIP: mergeinfo
 /** Query information related to merges (or potential merges) between SOURCE and TARGET.
  * @function mergeinfo
  * @memberof commands
