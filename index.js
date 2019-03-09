@@ -514,7 +514,7 @@ var merge = function( targets, options, callback ) {
 exports.commands.merge = merge;
 
 // WIP: mergeinfo
-/** Query information related to merges (or potential merges) between SOURCE-URL and TARGET.
+/** Query information related to merges (or potential merges) between SOURCE and TARGET.
  * @function mergeinfo
  * @memberof commands
  * @param {string} source - SOURCE URL
@@ -526,8 +526,6 @@ var mergeinfo = function( source, target, options, callback ) {
 	if ( typeof options === 'function' ) {
 		callback = options;
 		options = null;
-	} else if ( typeof options === 'string' ) {
-		options = { msg: options };
 	}
 	options = options || {};
 	addExtraOptions( [ 'quiet', 'msg', 'verbose', 'log', 'showRevs' ], options );
