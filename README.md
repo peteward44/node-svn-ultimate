@@ -110,6 +110,7 @@ Exposes the commands for the command line svn tool.
   * [.lock(targets, [options], [callback])](#commands.lock)
   * [.log(targets, [options], [callback])](#commands.log)
   * [.merge(targets, [options], [callback])](#commands.merge)
+  * [.mergeinfo(source, target, [options], [callback])](#commands.mergeinfo)
   * [.mkdir(targets, [options], [callback])](#commands.mkdir)
   * [.move(srcs, dst, [options], [callback])](#commands.move)
   * [.propdel(propName, target, [options], [callback])](#commands.propdel)
@@ -294,6 +295,20 @@ Apply the differences between two sources to a working copy path
 | Param | Type | Description |
 | --- | --- | --- |
 | targets | <code>Array</code> &#124; <code>string</code> | Target URLs |
+| [options] | <code>object</code> | Options object |
+| [callback] | <code>function</code> | Complete callback |
+
+<a name="commands.mergeinfo"></a>
+
+### commands.mergeinfo(source, target, [options], [callback])
+Query information related to merges (or potential merges) between SOURCE and TARGET.
+
+**Kind**: static method of [<code>commands</code>](#commands)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| source | <code>string</code> | SOURCE URL |
+| target | <code>string</code> | TARGET URL |
 | [options] | <code>object</code> | Options object |
 | [callback] | <code>function</code> | Complete callback |
 

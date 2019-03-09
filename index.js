@@ -135,7 +135,7 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 					break;
 				case 'revision':
 					if ( options.revision ) {
-						options.params.push('--revision',options.revision.toString());
+						options.params.push('--revision', options.revision.toString());
 						if ( addRevProp ) {
 							options.params.push( '--revprop' );
 						}
@@ -143,7 +143,7 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 					break;
 				case 'depth':
 					if ( options.depth ) {
-						options.params.push('--depth',options.depth.toString());
+						options.params.push('--depth', options.depth.toString());
 					}
 					break;
 				case 'ignoreExternals':
@@ -159,6 +159,11 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 				case 'verbose':
 					if ( options.verbose ) {
 						options.params.push('--verbose');
+					}
+					break;
+				case 'showRevs':
+					if ( options.showRevs ) {
+						options.params.push('--show-revs', options.showRevs);
 					}
 					break;
 			}
@@ -508,8 +513,24 @@ var merge = function( targets, options, callback ) {
 };
 exports.commands.merge = merge;
 
-
-// TODO: mergeinfo
+/** Query information related to merges (or potential merges) between SOURCE and TARGET.
+ * @function mergeinfo
+ * @memberof commands
+ * @param {string} source - SOURCE URL
+ * @param {string} target - TARGET URL
+ * @param {object} [options] - Options object
+ * @param {function} [callback] - Complete callback
+ */
+var mergeinfo = function( source, target, options, callback ) {
+	if ( typeof options === 'function' ) {
+		callback = options;
+		options = null;
+	}
+	options = options || {};
+	addExtraOptions( [ 'quiet', 'msg', 'verbose', 'log', 'showRevs' ], options );
+	executeSvn( [ 'mergeinfo' ].concat( source ).concat( target ), options, callback );
+};
+exports.commands.mergeinfo = mergeinfo;
 
 /** Creates a directory in the working copy or repository
  * @function mkdir
