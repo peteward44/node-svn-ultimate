@@ -147,7 +147,7 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 					}
 					break;
 				case 'ignoreExternals':
-					if ( options.depth ) {
+					if ( options.ignoreExternals ) {
 						options.params.push('--ignore-externals');
 					}
 					break;
