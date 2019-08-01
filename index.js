@@ -166,6 +166,11 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 						options.params.push('--show-revs', options.showRevs);
 					}
 					break;
+				case 'limit':
+					if ( options.limit ) {
+						options.params.push('--limit', options.limit.toString());
+					}
+					break;
 			}
 		} );
 	}
