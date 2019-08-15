@@ -166,6 +166,11 @@ var addExtraOptions = function( validOptionsArray, options, addRevProp ) {
 						options.params.push('--show-revs', options.showRevs);
 					}
 					break;
+				case 'limit':
+					if ( options.limit ) {
+						options.params.push('--limit', options.limit.toString());
+					}
+					break;
 			}
 		} );
 	}
@@ -486,7 +491,7 @@ var log = function( targets, options, callback ) {
 		options = null;
 	}
 	options = options || {};
-	addExtraOptions( [ 'quiet', 'depth', 'revision', 'verbose' ], options );
+	addExtraOptions( [ 'quiet', 'depth', 'revision', 'verbose','limit' ], options );
 	executeSvnXml( [ 'log' ].concat( targets ), options, callback );
 };
 exports.commands.log = log;
