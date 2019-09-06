@@ -1,6 +1,6 @@
 # node-svn-ultimate
 
-[![Build Status](https://travis-ci.org/peteward44/node-svn-ultimate.svg)](https://travis-ci.org/peteward44/node-svn-ultimate)
+***This project is no longer maintained***
 
 The ultimate SVN wrapper for node. Contains all the methods exposed by the command line svn tool, including checkout, update, info, etc, and includes svnmucc support.
 
